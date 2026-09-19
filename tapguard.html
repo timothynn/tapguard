@@ -1,0 +1,810 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TapGuard</title>
+<style>
+:root{
+  /* dark-first: bare :root is the committed dark palette (enterprise graphite) */
+  --bg:#0b0e14; --bg2:#0f131b; --surface:#141925; --surface2:#1a2130;
+  --line:#242c3b; --line2:#323c4f; --text:#e7ebf3; --muted:#94a1b8; --faint:#66738a;
+  --accent:#6f7dff; --accent-2:#94a0ff; --accent-ink:#0b0e14;
+  --good:#31d18e; --good-bg:#0e241d; --good-line:#1c5741;
+  --warn:#f5b53d; --warn-bg:#271f0f; --warn-line:#5c4718;
+  --crit:#ff5d6b; --crit-bg:#271317; --crit-line:#66252e;
+  --shadow:0 18px 44px -24px rgba(0,0,0,.78);
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --disp:'Archivo','IBM Plex Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#f2f4f8; --bg2:#eaeef4; --surface:#ffffff; --surface2:#f6f8fb;
+  --line:#e2e7ef; --line2:#ccd5e2; --text:#0f1726; --muted:#54607a; --faint:#7d8aa1;
+  --accent:#4a54e0; --accent-2:#3a43c9; --accent-ink:#ffffff;
+  --good:#0b8f5c; --good-bg:#e4f6ee; --good-line:#a6dfc7;
+  --warn:#9a6508; --warn-bg:#fbf1da; --warn-line:#e5cd93;
+  --crit:#d32f3f; --crit-bg:#fce7e9; --crit-line:#f2b6bc;
+  --shadow:0 14px 34px -22px rgba(15,25,45,.34);
+}}
+:root[data-theme="light"]{
+  --bg:#f2f4f8; --bg2:#eaeef4; --surface:#ffffff; --surface2:#f6f8fb;
+  --line:#e2e7ef; --line2:#ccd5e2; --text:#0f1726; --muted:#54607a; --faint:#7d8aa1;
+  --accent:#4a54e0; --accent-2:#3a43c9; --accent-ink:#ffffff;
+  --good:#0b8f5c; --good-bg:#e4f6ee; --good-line:#a6dfc7;
+  --warn:#9a6508; --warn-bg:#fbf1da; --warn-line:#e5cd93;
+  --crit:#d32f3f; --crit-bg:#fce7e9; --crit-line:#f2b6bc;
+  --shadow:0 14px 34px -22px rgba(15,25,45,.34);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+  font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(1200px 600px at 85% -10%, color-mix(in srgb,var(--accent) 9%,transparent), transparent 60%);}
+.wrap{max-width:1280px;margin:0 auto;padding-block:18px 40px;padding-left:16px;padding-right:16px}
+h1,h2,h3{margin:0;text-wrap:balance}
+.mono{font-family:var(--mono)}
+button{font-family:inherit;cursor:pointer}
+a{color:var(--accent)}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding:14px 16px;border:1px solid var(--line);border-radius:16px;
+  background:linear-gradient(180deg,var(--surface),var(--bg2));box-shadow:var(--shadow)}
+.brand{display:flex;align-items:center;gap:12px;margin-right:auto}
+.logo{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+  background:radial-gradient(120% 120% at 30% 20%,var(--accent-2),var(--accent));
+  color:var(--accent-ink);flex:none;box-shadow:0 0 0 1px color-mix(in srgb,var(--accent) 40%,transparent) inset}
+.logo svg{width:23px;height:23px}
+.brand h1{font-family:var(--disp);font-size:21px;letter-spacing:-.3px;font-weight:800;line-height:1}
+.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
+.track-chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--accent-2);border:1px solid var(--line2);border-radius:999px;padding:3px 9px;
+  background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.netbox{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;
+  padding:7px 12px;background:var(--surface2)}
+.netbox .lab{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.switch{position:relative;width:46px;height:26px;border-radius:999px;border:1px solid var(--line2);
+  background:var(--surface);transition:.18s;flex:none}
+.switch::after{content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;border-radius:50%;
+  background:var(--muted);transition:.18s}
+.switch[aria-checked="true"]{background:color-mix(in srgb,var(--good) 32%,transparent);border-color:var(--good-line)}
+.switch[aria-checked="true"]::after{left:22px;background:var(--good)}
+.netstate{font-family:var(--mono);font-size:12px;min-width:58px}
+.netstate.on{color:var(--good)} .netstate.off{color:var(--crit)}
+.btn{border:1px solid var(--line2);background:var(--surface2);color:var(--text);
+  border-radius:11px;padding:9px 13px;font-size:13px;font-weight:600;transition:.14s;display:inline-flex;align-items:center;gap:7px}
+.btn:hover{border-color:var(--accent);color:var(--accent-2)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover{filter:brightness(1.06);color:var(--accent-ink)}
+.btn.primary:disabled{opacity:.4;cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent}
+.btn.icon{padding:9px 11px}
+.btn svg{width:15px;height:15px;flex:none}
+
+/* segmented theme control */
+.seg{display:inline-flex;gap:2px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--surface2)}
+.seg-b{display:inline-flex;align-items:center;gap:6px;border:none;background:transparent;color:var(--muted);
+  font-size:12px;font-weight:600;padding:6px 11px;border-radius:9px;transition:.14s}
+.seg-b svg{width:14px;height:14px}
+.seg-b:hover{color:var(--text)}
+.seg-b[aria-pressed="true"]{background:var(--surface);color:var(--text);box-shadow:0 0 0 1px var(--line),0 1px 2px rgba(0,0,0,.14)}
+
+/* system status ribbon */
+.ribbon{display:flex;align-items:center;gap:0;flex-wrap:wrap;margin-top:10px;
+  border:1px solid var(--line);border-radius:12px;background:var(--bg2);overflow:hidden}
+.ribbon .seg-i{display:flex;align-items:center;gap:8px;padding:9px 14px;border-right:1px solid var(--line);
+  font-family:var(--mono);font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--faint);white-space:nowrap}
+.ribbon .seg-i:last-child{border-right:none;margin-left:auto}
+@media (max-width:720px){.ribbon .seg-i:last-child{margin-left:0}}
+.ribbon .seg-i b{color:var(--text);font-weight:600;letter-spacing:0;text-transform:none;font-size:11.5px}
+.ribbon .led{width:7px;height:7px;border-radius:50%;flex:none;box-shadow:0 0 0 3px color-mix(in srgb,currentColor 18%,transparent)}
+.ribbon .ok{color:var(--good)} .ribbon .ok .led{background:var(--good)}
+.ribbon .bad{color:var(--crit)} .ribbon .bad .led{background:var(--crit)}
+.ribbon .warnc{color:var(--warn)} .ribbon .warnc .led{background:var(--warn)}
+
+/* layout grid */
+.grid{display:grid;grid-template-columns:320px 1fr 360px;gap:16px;margin-top:16px;align-items:start}
+@media (max-width:1080px){.grid{grid-template-columns:1fr 1fr}.col-ops{grid-column:1/-1}}
+@media (max-width:720px){.grid{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+.card .hd{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--line)}
+.card .hd h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.card .hd .count{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--faint)}
+.card .bd{padding:14px 15px}
+.eyebrow{font-family:var(--mono);font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--faint)}
+
+/* guided steps */
+.steps{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.steps li{display:flex;gap:10px;padding:8px 9px;border-radius:10px;font-size:12.5px;color:var(--muted);line-height:1.35}
+.steps li .n{flex:none;width:20px;height:20px;border-radius:50%;border:1px solid var(--line2);
+  display:grid;place-items:center;font-family:var(--mono);font-size:11px;color:var(--faint);background:var(--surface2)}
+.steps li.active{background:color-mix(in srgb,var(--accent) 12%,transparent);color:var(--text)}
+.steps li.active .n{border-color:var(--accent);color:var(--accent-2)}
+.steps li.done{color:var(--faint)}
+.steps li.done .n{background:var(--good);border-color:var(--good);color:var(--accent-ink)}
+.steps li.done b{text-decoration:line-through;text-decoration-color:var(--line2)}
+.steps li b{color:inherit;font-weight:600}
+
+/* wallet cards */
+.media{border:1px solid var(--line);border-radius:13px;padding:11px 12px;background:var(--surface2);margin-bottom:10px;position:relative;overflow:hidden}
+.media.clone{border-style:dashed;border-color:var(--crit-line);background:var(--crit-bg)}
+.media.revoked{opacity:.85}
+.media .rowtop{display:flex;align-items:center;gap:9px}
+.media .chip{width:30px;height:22px;border-radius:5px;flex:none;
+  background:linear-gradient(135deg,#d9b25a,#a97f24);box-shadow:0 0 0 1px rgba(0,0,0,.25) inset}
+.media.clone .chip{background:linear-gradient(135deg,#ff9aa2,#c23b46)}
+.media .who{font-weight:700;font-size:13px}
+.media .id{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.media .tag{margin-left:auto;font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;
+  padding:3px 7px;border-radius:999px;border:1px solid var(--line2);color:var(--muted)}
+.media .tag.clone{color:var(--crit);border-color:var(--crit-line);background:color-mix(in srgb,var(--crit) 12%,transparent)}
+.media .tag.revoked{color:var(--crit);border-color:var(--crit-line)}
+.media .meta{display:flex;gap:14px;margin-top:9px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.media .meta b{color:var(--text);font-weight:600}
+.media .acts{display:flex;gap:7px;margin-top:11px;flex-wrap:wrap}
+.tapbtn{flex:1;min-width:120px;border:1px solid var(--line2);background:var(--surface);color:var(--text);
+  border-radius:9px;padding:8px 6px;font-size:12px;font-weight:600;display:flex;flex-direction:column;align-items:center;gap:1px;transition:.14s}
+.tapbtn:hover{border-color:var(--accent);color:var(--accent-2)}
+.tapbtn small{font-size:9.5px;color:var(--faint);font-weight:500}
+.tapbtn:hover small{color:inherit}
+.clonebtn{width:100%;margin-top:9px;border:1px dashed var(--crit-line);background:transparent;color:var(--crit);
+  border-radius:9px;padding:8px;font-size:12px;font-weight:600;
+  display:inline-flex;align-items:center;justify-content:center;gap:7px}
+.clonebtn svg{width:14px;height:14px;flex:none}
+.clonebtn:hover{background:var(--crit-bg)}
+.clonebtn:disabled{opacity:.4;cursor:not-allowed}
+
+/* validator gates */
+.gates{display:flex;flex-direction:column;gap:16px}
+.gate{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.gate .ghd{display:flex;align-items:center;gap:10px;padding:12px 15px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.gate .stn{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:-.2px}
+.gate .line{font-family:var(--mono);font-size:10.5px;color:var(--faint);text-transform:uppercase;letter-spacing:.1em}
+.gate .modepill{margin-left:auto;font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;
+  padding:4px 9px;border-radius:999px;border:1px solid var(--line2);color:var(--muted);display:flex;align-items:center;gap:6px}
+.gate .modepill .dot{width:7px;height:7px;border-radius:50%;background:var(--good)}
+.gate .modepill.off .dot{background:var(--crit)}
+.screen{padding:20px 16px;min-height:132px;display:flex;flex-direction:column;justify-content:center;gap:6px;
+  transition:background .2s;position:relative}
+.screen .big{font-family:var(--disp);font-weight:800;font-size:34px;letter-spacing:-1px;line-height:1;display:flex;align-items:center;gap:12px}
+.screen .rsn{font-size:13px;max-width:52ch}
+.screen .sub{font-family:var(--mono);font-size:11px;color:var(--muted)}
+.screen .ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;flex:none}
+.screen .ic svg{width:21px;height:21px}
+.screen.idle{background:var(--surface)}
+.screen.idle .big{color:var(--muted);font-size:22px}
+.screen.accept{background:linear-gradient(180deg,var(--good-bg),var(--surface))}
+.screen.accept .big{color:var(--good)} .screen.accept .ic{background:var(--good);color:var(--accent-ink)}
+.screen.reject{background:linear-gradient(180deg,var(--crit-bg),var(--surface))}
+.screen.reject .big{color:var(--crit)} .screen.reject .ic{background:var(--crit);color:#fff}
+.screen.review{background:linear-gradient(180deg,var(--warn-bg),var(--surface))}
+.screen.review .big{color:var(--warn)} .screen.review .ic{background:var(--warn);color:var(--accent-ink)}
+@keyframes flash{0%{transform:scale(.98);opacity:.4}100%{transform:scale(1);opacity:1}}
+.screen.flash{animation:flash .22s ease-out}
+.gate .gfoot{display:flex;gap:16px;padding:9px 15px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--faint);flex-wrap:wrap}
+.gate .gfoot b{color:var(--muted);font-weight:600}
+
+/* revenue tiles */
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--surface2)}
+.tile .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.tile .v{font-family:var(--disp);font-weight:800;font-size:22px;margin-top:3px;font-variant-numeric:tabular-nums}
+.tile.good .v{color:var(--good)} .tile.crit .v{color:var(--crit)}
+
+/* ops console tabs */
+.tabs{display:flex;gap:4px;padding:8px 10px;border-bottom:1px solid var(--line);background:var(--surface2)}
+.tab{border:none;background:transparent;color:var(--muted);font-size:12px;font-weight:600;padding:6px 11px;border-radius:8px}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--text);box-shadow:0 0 0 1px var(--line)}
+.tab .b{display:inline-block;min-width:16px;padding:0 5px;margin-left:5px;border-radius:999px;background:var(--accent);
+  color:var(--accent-ink);font-family:var(--mono);font-size:10px;line-height:16px;text-align:center}
+.panel{max-height:520px;overflow-y:auto;padding:12px}
+.empty{color:var(--faint);font-size:12.5px;text-align:center;padding:26px 12px}
+
+/* incidents */
+.inc{border:1px solid var(--line);border-left-width:3px;border-radius:11px;padding:11px 12px;margin-bottom:10px;background:var(--surface2)}
+.inc.sev-crit{border-left-color:var(--crit)} .inc.sev-warn{border-left-color:var(--warn)}
+.inc.sev-good{border-left-color:var(--good)} .inc.sev-info{border-left-color:var(--accent)}
+.inc .ih{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.inc .sev{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:2px 6px;border-radius:5px}
+.sev-crit .sev{background:var(--crit);color:#fff} .sev-warn .sev{background:var(--warn);color:var(--accent-ink)}
+.sev-good .sev{background:var(--good);color:var(--accent-ink)} .sev-info .sev{background:var(--accent);color:var(--accent-ink)}
+.inc .it{font-weight:700;font-size:13px} .inc .tm{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--faint)}
+.inc .desc{font-size:12.5px;color:var(--text);margin:3px 0 8px}
+.inc .ev{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--bg2);border:1px solid var(--line);border-radius:8px;padding:7px 9px;margin-bottom:8px}
+.inc .ev div{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.inc .act{display:flex;align-items:flex-start;gap:7px;font-size:12px}
+.inc .act .lab{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);flex:none;margin-top:2px}
+.inc .act .txt{font-weight:600;color:var(--accent-2)}
+
+/* ledger */
+.lg{width:100%;border-collapse:collapse;font-family:var(--mono);font-size:11.5px}
+.lg th{text-align:left;color:var(--faint);font-weight:500;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;padding:5px 6px;border-bottom:1px solid var(--line);position:sticky;top:-12px;background:var(--surface)}
+.lg td{padding:6px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+.lg .r{color:var(--crit)} .lg .a{color:var(--good)} .lg .w{color:var(--warn)}
+.lg .off{color:var(--warn)} .lg .on{color:var(--muted)}
+.lg tr:last-child td{border-bottom:none}
+.dot-res{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:5px;vertical-align:middle}
+
+/* deny list */
+.deny-hd{font-family:var(--mono);font-size:11px;color:var(--muted);background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:9px 10px;margin-bottom:11px;line-height:1.6}
+.deny-hd .sig{color:var(--good);word-break:break-all}
+.deny-hd .v{color:var(--accent-2)}
+.deny-row{display:flex;align-items:center;gap:9px;border:1px solid var(--line);border-radius:9px;padding:8px 10px;margin-bottom:7px;background:var(--surface2)}
+.deny-row .id{font-family:var(--mono);font-size:12px;font-weight:600}
+.deny-row .rsn{font-size:11px;color:var(--muted);margin-left:auto;text-align:right}
+.reconcile-bar{display:flex;align-items:center;gap:10px;margin-top:12px;padding:11px 13px;border:1px dashed var(--line2);border-radius:12px;background:var(--surface2)}
+.reconcile-bar.hot{border-color:var(--warn-line);background:var(--warn-bg)}
+.reconcile-bar .txt{font-size:12px;color:var(--muted);line-height:1.35}
+.reconcile-bar .txt b{color:var(--text)}
+
+/* mechanism footer */
+.mech{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);padding:16px}
+.mech h3{font-family:var(--disp);font-size:14px;margin-bottom:10px}
+.mech .row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media (max-width:720px){.mech .row{grid-template-columns:1fr}}
+.mech .m{font-size:12.5px;color:var(--muted);line-height:1.55}
+.mech .m b{color:var(--text);display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;font-weight:600}
+.say{margin-top:12px;padding:11px 13px;border-radius:11px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid var(--line2);font-size:12.5px}
+.say b{color:var(--accent-2)}
+
+/* footer */
+.foot{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);
+  display:grid;grid-template-columns:auto auto 1fr;gap:10px 26px;align-items:baseline}
+@media (max-width:860px){.foot{grid-template-columns:1fr}}
+.foot .fl{font-family:var(--mono);font-size:10.5px;color:var(--faint);line-height:1.55}
+.foot .fk{display:block;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-size:9.5px;margin-bottom:2px}
+
+/* toast */
+#toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(20px);opacity:0;
+  background:var(--text);color:var(--bg);font-weight:600;font-size:13px;padding:11px 18px;border-radius:11px;
+  box-shadow:var(--shadow);transition:.22s;pointer-events:none;z-index:50;max-width:90vw;text-align:center}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.hl{outline:2px solid var(--accent);outline-offset:3px;border-radius:13px;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{50%{outline-color:transparent}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.2 8 11 4.6-2.8 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+      <div>
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><h1>TapGuard</h1><span class="track-chip">Everyday · fare validation</span></div>
+        <p>Offline-first fare validation &amp; clone defense — Nairobi Metro Phase I &amp; BRT</p>
+      </div>
+    </div>
+    <div class="controls">
+      <div class="netbox">
+        <span class="lab">Gate link</span>
+        <button id="netSwitch" class="switch" role="switch" aria-checked="true" aria-label="Toggle gate network link"></button>
+        <span id="netState" class="netstate on">ONLINE</span>
+      </div>
+      <div class="seg" role="group" aria-label="Colour theme">
+        <button class="seg-b" data-theme-set="light" aria-pressed="false" title="Light theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.1 5.1l1.4 1.4M17.5 17.5l1.4 1.4M18.9 5.1l-1.4 1.4M6.5 17.5l-1.4 1.4"/></svg>Light</button>
+        <button class="seg-b" data-theme-set="dark" aria-pressed="true" title="Dark theme">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8Z"/></svg>Dark</button>
+      </div>
+      <button id="resetBtn" class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4.5V10h5.5"/></svg>Reset</button>
+    </div>
+  </div>
+
+  <div class="ribbon" id="ribbon"></div>
+
+  <div class="grid">
+    <!-- LEFT: guided + wallet -->
+    <div class="col-left">
+      <div class="card" style="margin-bottom:16px">
+        <div class="hd"><h2>Run the demo</h2><span class="count" id="stepCount">0 / 7</span></div>
+        <div class="bd"><ol class="steps" id="steps"></ol></div>
+      </div>
+      <div class="card">
+        <div class="hd"><h2>Fare media</h2><span class="count">rider wallet</span></div>
+        <div class="bd" id="wallet"></div>
+      </div>
+    </div>
+
+    <!-- CENTER: gates + tiles -->
+    <div class="col-center">
+      <div class="gates" id="gates"></div>
+      <div class="card" style="margin-top:16px">
+        <div class="hd"><h2>Revenue protection</h2><span class="count">this session</span></div>
+        <div class="bd"><div class="tiles" id="tiles"></div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: ops console -->
+    <div class="col-ops">
+      <div class="card">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" data-tab="inc" aria-selected="true">Incidents<span class="b" id="incB">0</span></button>
+          <button class="tab" role="tab" data-tab="lg" aria-selected="false">Tap ledger</button>
+          <button class="tab" role="tab" data-tab="deny" aria-selected="false">Deny-list<span class="b" id="denyB">0</span></button>
+        </div>
+        <div class="panel" id="panel"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mech">
+    <h3>What the gate is actually checking</h3>
+    <div class="row">
+      <div class="m"><b>Signed tap, offline</b>Every tap is an HMAC-SHA256 token over card ID, a rising counter, station and time. Gates verify it with no network. Forged or replayed media is refused at the gate.</div>
+      <div class="m"><b>Impossible travel</b>Networked gates share a last-seen table. One card at two stations faster than a human can travel is a clone — blocked in real time.</div>
+      <div class="m"><b>Offline reconcile</b>In a tunnel or on a matatu, gates run offline and buffer taps. On reconnect they merge, catch cross-gate clones, and push a signed deny-list to every gate.</div>
+    </div>
+    <div class="say">Open your demo with: <b>"Everyday track — TapGuard. The recurring job is fare validation and clone triage. Today a conductor or gate does it by eye; here's the machine doing it in under a second, even offline."</b></div>
+  </div>
+
+  <footer class="foot">
+    <div class="fl"><span class="fk">Crypto</span> HMAC-SHA256 via WebCrypto · per-card keys · signed deny-list</div>
+    <div class="fl"><span class="fk">Fare rules</span> KSh 50 CBD-core flat · min plausible transfer 120s</div>
+    <div class="fl"><span class="fk">Status</span> Reference implementation — keys are generated in-page for demonstration and are not production key management.</div>
+  </footer>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<script>
+const enc = new TextEncoder();
+const FARE = 50; // KSh flat CBD-core fare
+const MIN_TRAVEL_S = 120; // plausible min travel between the two stations
+const STATIONS = {
+  A:{id:'A', name:'Railways / Muthurwa', line:'CBD core · underground'},
+  B:{id:'B', name:'Upper Hill', line:'CBD core · underground'}
+};
+const KES = n => 'KSh ' + n.toLocaleString('en-KE');
+const now = () => Date.now();
+const el = id => document.getElementById(id);
+
+let S; // state
+let keyById = {}; // card id -> CryptoKey (shared symmetric key, provisioned to media + gates)
+let opsKey = null; // deny-list signing key
+
+async function makeKey(){
+  const raw = crypto.getRandomValues(new Uint8Array(32));
+  return crypto.subtle.importKey('raw', raw, {name:'HMAC', hash:'SHA-256'}, false, ['sign']);
+}
+async function hmacHex(key, msg){
+  const sig = await crypto.subtle.sign('HMAC', key, enc.encode(msg));
+  return [...new Uint8Array(sig)].map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+function freshEdge(){ return { acct:{}, buffer:[], deny:new Set(), denyVer:0, last:null }; }
+
+function initState(){
+  return {
+    online:true,
+    accounts:{ // shared account balances, keyed by card ID
+      K001:{holder:'Wanjiku M.', balance:800},
+      K042:{holder:'Otieno D.', balance:420},
+      K077:{holder:"Achieng' P.", balance:1500}
+    },
+    media:[ // physical media in play
+      {mid:'m1', id:'K001', kind:'genuine', counter:0},
+      {mid:'m2', id:'K042', kind:'genuine', counter:0},
+      {mid:'m3', id:'K077', kind:'genuine', counter:0}
+    ],
+    backend:{ acct:{}, deny:new Set(), denyVer:0 },
+    edges:{ A:freshEdge(), B:freshEdge() },
+    ledger:[],
+    incidents:[],
+    denyDetail:{}, // id -> reason
+    protected:0, leaked:0,
+    tab:'inc',
+    flags:{}
+  };
+}
+
+async function boot(){
+  keyById = {};
+  for(const id of ['K001','K042','K077']) keyById[id] = await makeKey();
+  opsKey = await makeKey();
+  S = initState();
+  await seedAmbient();
+  await resignDeny();
+  renderAll();
+}
+
+// seed a little honest example traffic so the console isn't empty at rest
+async function seedAmbient(){
+  const m42 = S.media.find(m=>m.id==='K042');
+  const m77 = S.media.find(m=>m.id==='K077');
+  await rawTap(m77,'A', now()-1000*60*4);
+  await rawTap(m42,'B', now()-1000*60*2);
+}
+
+/* ---------- deny-list signing ---------- */
+async function resignDeny(){
+  const ids=[...S.backend.deny].sort();
+  const payload = 'v'+S.backend.denyVer+'|'+ids.join(',');
+  S.denySig = await hmacHex(opsKey, payload);
+}
+
+/* ---------- core tap + validation ---------- */
+async function rawTap(mediaObj, edgeId, ts){
+  const acct = S.accounts[mediaObj.id];
+  const c = ++mediaObj.counter;
+  const t = ts || now();
+  const msg = mediaObj.id+'|'+c+'|'+edgeId+'|'+t;
+  const mac = await hmacHex(keyById[mediaObj.id], msg);
+  const tap = {id:mediaObj.id, holder:acct.holder, kind:mediaObj.kind, c, edgeId, ts:t, mac};
+  return validate(edgeId, tap);
+}
+
+function secsAgo(ts){ return Math.max(0, Math.round((now()-ts)/1000)); }
+
+async function validate(edgeId, tap){
+  const online = S.online;
+  const store = online ? S.backend : S.edges[edgeId];
+  const denySet = online ? S.backend.deny : S.edges[edgeId].deny;
+  let res;
+
+  // 1. revoked media
+  if(denySet.has(tap.id)){
+    res = mkRes('reject','REFUSED','Card '+tap.id+' is on the signed deny-list. Media revoked.', tap, 'REVOKED');
+    if(isClone(tap)) S.protected += FARE;
+    addIncident('good','Revoked card refused', tap.holder+' ('+tap.id+') was blocked at '+STATIONS[edgeId].name+' — already revoked on deny-list v'+ (online?S.backend.denyVer:S.edges[edgeId].denyVer) +'.',
+      ['card '+tap.id+' · deny-list hit · '+STATIONS[edgeId].name], 'None — clone permanently blocked at every gate.');
+  }
+  // 2. forged signature
+  else if(tap.mac !== await hmacHex(keyById[tap.id], tap.id+'|'+tap.c+'|'+tap.edgeId+'|'+tap.ts)){
+    res = mkRes('reject','FORGED','Cryptographic signature failed. This is not genuine media.', tap, 'BAD-SIG');
+    S.protected += FARE;
+    addIncident('crit','Forged media rejected','A tap for '+tap.id+' at '+STATIONS[edgeId].name+' failed HMAC verification.',
+      ['expected valid MAC · got mismatch'], 'None — refused at gate. Log device ID for follow-up.');
+  }
+  else {
+    const a = store.acct[tap.id];
+    // 3. replay / counter rollback
+    if(a && tap.c <= a.counter){
+      res = mkRes('reject','REPLAY','Counter '+tap.c+' already used (last seen '+a.counter+'). Replayed media.', tap, 'REPLAY');
+      if(isClone(tap)) S.protected += FARE;
+      addIncident('crit','Replay blocked', tap.id+' presented a stale counter at '+STATIONS[edgeId].name+'.',
+        ['counter '+tap.c+' ≤ last '+a.counter], 'Refused at gate. Flag media '+tap.id+' for review.');
+    }
+    // 4. impossible travel (only visible where the store has seen the other station)
+    else if(a && a.station !== tap.edgeId && (tap.ts - a.ts) < MIN_TRAVEL_S*1000){
+      const gap = secsAgo(a.ts) - secsAgo(tap.ts);
+      const dt = Math.max(1, Math.round((tap.ts - a.ts)/1000));
+      res = mkRes('reject','CLONE','Also tapped at '+STATIONS[a.station].name+' '+dt+'s ago. Impossible travel — clone blocked.', tap, 'CLONE');
+      S.protected += FARE;
+      // networked gates block the ride live; permanent revocation is a reconcile decision
+      addIncident('crit','Clone blocked in real time', tap.holder+"'s card ("+tap.id+') tapped at '+STATIONS[tap.edgeId].name+' just '+dt+'s after '+STATIONS[a.station].name+' — physically impossible.',
+        ['tap 1 · '+tap.id+' @ '+STATIONS[a.station].name+' · counter '+a.counter,
+         'tap 2 · '+tap.id+' @ '+STATIONS[tap.edgeId].name+' · counter '+tap.c+' (+'+dt+'s)'],
+        'Ride refused at gate. Flag '+tap.id+' for revocation on next reconcile.');
+    }
+    else {
+      // ACCEPT
+      const acct = S.accounts[tap.id];
+      const before = acct.balance;
+      acct.balance = Math.max(0, acct.balance - FARE);
+      store.acct[tap.id] = {counter:tap.c, station:tap.edgeId, ts:tap.ts};
+      if(!online) S.edges[edgeId].buffer.push({...tap});
+      if(isClone(tap)){ S.leaked += FARE; }
+      res = mkRes('accept','GO', tap.holder+' · fare '+KES(FARE)+' · balance '+KES(acct.balance), tap, 'OK');
+      res.balBefore = before;
+    }
+  }
+
+  // record to ledger
+  S.ledger.unshift({ id:tap.id, edgeId, c:tap.c, ts:tap.ts, code:res.code, kind:tap.kind,
+    online, mac:tap.mac.slice(0,10) });
+  if(S.ledger.length>60) S.ledger.pop();
+  S.edges[edgeId].last = res;
+
+  // flags for guided steps
+  trackFlags(edgeId, tap, res);
+  return res;
+}
+
+function isClone(tap){ return tap.kind==='clone'; }
+
+function mkRes(cls, big, rsn, tap, code){
+  return {cls, big, rsn, code, tap, at:now()};
+}
+
+function revoke(id, reason){
+  if(S.backend.deny.has(id)) return;
+  S.backend.deny.add(id);
+  S.backend.denyVer++;
+  S.denyDetail[id] = reason;
+  resignDeny();
+  // when online, distribution to gates is immediate
+  if(S.online) distributeDeny();
+}
+function distributeDeny(){
+  for(const k of ['A','B']){
+    S.edges[k].deny = new Set(S.backend.deny);
+    S.edges[k].denyVer = S.backend.denyVer;
+  }
+}
+
+/* ---------- clone ---------- */
+async function cloneMedia(srcMid){
+  const src = S.media.find(m=>m.mid===srcMid);
+  if(!src) return;
+  if(S.media.some(m=>m.kind==='clone' && m.id===src.id)) return; // one clone for the demo
+  // a skimmed copy: same ID, same key (already shared), snapshot of the counter
+  S.media.push({mid:'clone_'+src.id, id:src.id, kind:'clone', counter:src.counter});
+  S.flags.cloned = true;
+  toast('Card '+src.id+' skimmed at a matatu stage — clone created');
+  renderAll();
+}
+
+/* ---------- reconcile ---------- */
+function reconcile(){
+  if(!S.online){ toast('Restore the gate link first'); return; }
+  const buffered = S.edges.A.buffer.length + S.edges.B.buffer.length;
+  if(buffered===0){ toast('Nothing to reconcile'); return; }
+
+  // merge every accepted tap (any mode) per card, sorted by time, scan for impossible pairs
+  const accepted = {};
+  for(const row of S.ledger){ if(row.code==='OK'){ (accepted[row.id]=accepted[row.id]||[]).push(row); } }
+  let revoked=0;
+  for(const id in accepted){
+    if(S.backend.deny.has(id)) continue;
+    const taps = accepted[id].slice().sort((x,y)=>x.ts-y.ts);
+    for(let i=1;i<taps.length;i++){
+      const p=taps[i-1], q=taps[i];
+      if(p.edgeId!==q.edgeId && (q.ts-p.ts) < MIN_TRAVEL_S*1000){
+        const dt = Math.max(1, Math.round((q.ts-p.ts)/1000));
+        const acct = S.accounts[id];
+        revoke(id, 'Reconcile: '+STATIONS[p.edgeId].name+' & '+STATIONS[q.edgeId].name+' '+dt+'s apart while offline');
+        addIncident('crit','Clone confirmed on reconcile', acct.holder+"'s card ("+id+') was accepted at two gates '+dt+'s apart while the network was down. '+KES(FARE)+' leaked before it was caught.',
+          ['offline tap · '+id+' @ '+STATIONS[p.edgeId].name+' · counter '+p.c,
+           'offline tap · '+id+' @ '+STATIONS[q.edgeId].name+' · counter '+q.c+' (+'+dt+'s)'],
+          'Freeze account, refund '+KES(FARE)+' to '+acct.holder+', reissue card. Deny-list v'+(S.backend.denyVer)+' pushed to all gates.');
+        revoked++;
+        break;
+      }
+    }
+  }
+  // clear buffers, sync gate caches to backend truth
+  const n = buffered;
+  S.edges.A.buffer=[]; S.edges.B.buffer=[];
+  for(const k of ['A','B']){ S.edges[k].acct = JSON.parse(JSON.stringify(S.backend.acct)); }
+  distributeDeny();
+  S.flags.reconciled = revoked>0 || S.flags.reconciled;
+  addIncident('info','Gates reconciled', n+' offline tap(s) merged to the backend. Gate caches and deny-list re-synced.',
+    ['buffered offline taps: '+n, 'clones confirmed: '+revoked], revoked? 'Deny-list distributed to every gate.' : 'No cross-gate anomalies found.');
+  toast(revoked? (revoked+' clone confirmed — card revoked & deny-list pushed') : 'Reconciled — no clones found');
+  renderAll();
+}
+
+/* ---------- guided flags ---------- */
+function trackFlags(edgeId, tap, res){
+  const f=S.flags;
+  if(tap.id==='K001' && edgeId==='A' && res.code==='OK') f.tapGenuineA = true;
+  if(isClone(tap) && S.online && (res.code==='CLONE'||res.code==='REPLAY')) f.onlineCloneRejected = true;
+  if(!S.online && res.code==='OK'){
+    if(isClone(tap)) f.offlineClone = true; else if(tap.id==='K001') f.offlineGenuine = true;
+  }
+  if(res.code==='REVOKED' && isClone(tap)) f.revokedReject = true;
+}
+
+/* ---------- incidents ---------- */
+function addIncident(sev, title, desc, ev, act){
+  S.incidents.unshift({sev, title, desc, ev, act, ts:now()});
+}
+
+/* ================= RENDER ================= */
+function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTiles(); renderPanel(); }
+
+function renderRibbon(){
+  const buffered = S.edges.A.buffer.length + S.edges.B.buffer.length;
+  const revoked = S.backend.deny.size;
+  let sysCls='ok', sysTxt='Operational';
+  if(!S.online){ sysCls='warnc'; sysTxt='Degraded — local validation'; }
+  if(revoked){ sysCls='bad'; sysTxt='Active fraud incident'; }
+  const rows=[
+    ['seg-i '+sysCls, true, 'System', sysTxt],
+    ['seg-i '+(S.online?'ok':'bad'), true, 'Gate link', S.online?'2 / 2 networked':'0 / 2 — buffering'],
+    ['seg-i', false, 'Deny-list', 'v'+S.backend.denyVer+' · '+revoked+' revoked'],
+    ['seg-i'+(buffered?' warnc':''), buffered>0, 'Unreconciled', buffered+' tap'+(buffered===1?'':'s')],
+    ['seg-i', false, 'Environment', 'Nairobi Metro Phase I · sandbox']
+  ];
+  el('ribbon').innerHTML = rows.map(([cls,led,k,v])=>
+    '<div class="'+cls+'">'+(led?'<span class="led"></span>':'')+k+' <b>'+v+'</b></div>').join('');
+}
+
+function renderNet(){
+  const sw=el('netSwitch'), st=el('netState');
+  sw.setAttribute('aria-checked', S.online?'true':'false');
+  st.textContent = S.online?'ONLINE':'OFFLINE';
+  st.className = 'netstate '+(S.online?'on':'off');
+}
+
+const STEP_DEFS = [
+  {k:'tapGenuineA', b:'Tap Wanjiku', t:'at Railways / Muthurwa — a clean ACCEPT.'},
+  {k:'cloned', b:'Skim the card', t:'clone K001, as a card sniffer would at a stage.'},
+  {k:'onlineCloneRejected', b:'Tap the clone', t:'at Upper Hill while gates are ONLINE — blocked instantly (impossible travel).'},
+  {k:'wentOffline', b:'Cut the link', t:'flip gates OFFLINE — a tunnel with no signal.'},
+  {k:'offlineBoth', b:'Tap both offline', t:'genuine at Railways, clone at Upper Hill — both pass locally.'},
+  {k:'reconciled', b:'Reconcile', t:'restore the link and reconcile — clone caught, card revoked.'},
+  {k:'revokedReject', b:'Tap clone again', t:'anywhere — refused by the signed deny-list.'}
+];
+function stepDone(k){
+  if(k==='wentOffline') return S.flags.wentOffline;
+  if(k==='offlineBoth') return S.flags.offlineGenuine && S.flags.offlineClone;
+  return !!S.flags[k];
+}
+function renderSteps(){
+  const ol=el('steps'); let done=0, activeSet=false; ol.innerHTML='';
+  STEP_DEFS.forEach((s,i)=>{
+    const isDone=stepDone(s.k); if(isDone)done++;
+    let cls=''; if(isDone)cls='done'; else if(!activeSet){cls='active';activeSet=true;}
+    const li=document.createElement('li'); li.className=cls;
+    li.innerHTML='<span class="n">'+(isDone?'✓':(i+1))+'</span><span><b>'+s.b+'</b> '+s.t+'</span>';
+    ol.appendChild(li);
+  });
+  el('stepCount').textContent = done+' / 7';
+}
+
+function renderWallet(){
+  const w=el('wallet'); w.innerHTML='';
+  S.media.forEach(m=>{
+    const acct=S.accounts[m.id];
+    const revoked = S.backend.deny.has(m.id);
+    const d=document.createElement('div');
+    d.className='media'+(m.kind==='clone'?' clone':'')+(revoked?' revoked':'');
+    let tag='';
+    if(m.kind==='clone') tag='<span class="tag clone">cloned copy</span>';
+    else if(revoked) tag='<span class="tag revoked">revoked</span>';
+    else tag='<span class="tag">genuine</span>';
+    d.innerHTML =
+      '<div class="rowtop"><span class="chip"></span>'+
+        '<div><div class="who">'+acct.holder+'</div><div class="id">'+m.id+(m.kind==='clone'?' · skimmed':'')+'</div></div>'+
+        tag+
+      '</div>'+
+      '<div class="meta"><span>bal <b>'+KES(acct.balance)+'</b></span><span>ctr <b>'+m.counter+'</b></span></div>'+
+      '<div class="acts">'+
+        '<button class="tapbtn" data-tap="'+m.mid+'" data-edge="A">Tap · Railways<small>Muthurwa</small></button>'+
+        '<button class="tapbtn" data-tap="'+m.mid+'" data-edge="B">Tap · Upper Hill<small>CBD core</small></button>'+
+      '</div>'+
+      (m.kind==='genuine' && m.id==='K001'
+        ? '<button class="clonebtn" data-clone="'+m.mid+'"'+(S.media.some(x=>x.kind==='clone'&&x.id===m.id)?' disabled':'')+'><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8.5" y="8.5" width="12" height="12" rx="2.2"/><path d="M15.5 8.5v-3a2 2 0 0 0-2-2h-8a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h3"/></svg>Skim / clone this card</button>'
+        : '');
+    w.appendChild(d);
+  });
+}
+
+function renderGates(){
+  const g=el('gates'); g.innerHTML='';
+  for(const k of ['A','B']){
+    const stn=STATIONS[k], last=S.edges[k].last;
+    const scr = last ? screenFor(last) : {cls:'idle', ic:'', big:'READY', rsn:'Tap a card to validate.', sub:''};
+    const edge=S.edges[k];
+    const div=document.createElement('div'); div.className='gate';
+    div.innerHTML =
+      '<div class="ghd"><div><div class="stn">'+stn.name+'</div><div class="line">'+stn.line+'</div></div>'+
+        '<div class="modepill'+(S.online?'':' off')+'"><span class="dot"></span>'+(S.online?'networked':'offline')+'</div></div>'+
+      '<div class="screen '+scr.cls+' flash">'+
+        (scr.ic?'<div class="big"><span class="ic">'+scr.ic+'</span>'+scr.big+'</div>':'<div class="big">'+scr.big+'</div>')+
+        '<div class="rsn">'+scr.rsn+'</div>'+ (scr.sub?'<div class="sub">'+scr.sub+'</div>':'')+
+      '</div>'+
+      '<div class="gfoot"><span>deny-list <b>v'+edge.denyVer+'</b> ('+edge.deny.size+')</span>'+
+        '<span>buffered <b>'+edge.buffer.length+'</b></span>'+
+        (last?'<span>last <b>'+last.code+'</b></span>':'<span>idle</span>')+'</div>';
+    g.appendChild(div);
+    // retrigger flash
+    const s=div.querySelector('.screen'); s.classList.remove('flash'); void s.offsetWidth; s.classList.add('flash');
+  }
+}
+const SVG_OK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="m4.5 12.5 5 5 10-11"/></svg>';
+const SVG_NO='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+const SVG_WARN='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 6.5v7M12 17.4v.2"/></svg>';
+function screenFor(r){
+  if(r.cls==='accept') return {cls:'accept', ic:SVG_OK, big:'GO', rsn:r.rsn, sub:'tap signed & verified · counter '+r.tap.c+' · mac '+r.tap.mac.slice(0,10)};
+  if(r.cls==='review') return {cls:'review', ic:SVG_WARN, big:'REVIEW', rsn:r.rsn, sub:''};
+  return {cls:'reject', ic:SVG_NO, big:r.big, rsn:r.rsn, sub:'code '+r.code+' · card '+r.tap.id};
+}
+
+function renderTiles(){
+  const t=el('tiles');
+  t.innerHTML =
+    '<div class="tile good"><div class="k">Revenue protected</div><div class="v">'+KES(S.protected)+'</div></div>'+
+    '<div class="tile crit"><div class="k">Leaked (pre-catch)</div><div class="v">'+KES(S.leaked)+'</div></div>'+
+    '<div class="tile"><div class="k">Cards revoked</div><div class="v">'+S.backend.deny.size+'</div></div>'+
+    '<div class="tile"><div class="k">Taps validated</div><div class="v">'+S.ledger.length+'</div></div>';
+}
+
+/* ops console */
+function renderPanel(){
+  el('incB').textContent=S.incidents.length;
+  el('denyB').textContent=S.backend.deny.size;
+  document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===S.tab?'true':'false'));
+  const p=el('panel');
+  if(S.tab==='inc') p.innerHTML = renderIncidents();
+  else if(S.tab==='lg') p.innerHTML = renderLedger();
+  else p.innerHTML = renderDeny();
+}
+function renderIncidents(){
+  if(!S.incidents.length) return '<div class="empty">No incidents yet. The copilot writes one for every anomaly it catches.</div>';
+  return S.incidents.map(i=>{
+    const ev=(i.ev||[]).map(e=>'<div>'+e+'</div>').join('');
+    return '<div class="inc sev-'+i.sev+'">'+
+      '<div class="ih"><span class="sev">'+i.sev+'</span><span class="it">'+i.title+'</span><span class="tm">'+clock(i.ts)+'</span></div>'+
+      '<div class="desc">'+i.desc+'</div>'+
+      (ev?'<div class="ev">'+ev+'</div>':'')+
+      '<div class="act"><span class="lab">action</span><span class="txt">'+i.act+'</span></div>'+
+    '</div>';
+  }).join('');
+}
+function renderLedger(){
+  if(!S.ledger.length) return '<div class="empty">No taps yet.</div>';
+  const rows=S.ledger.map(r=>{
+    const cls = r.code==='OK'?'a':(r.code==='REVIEW'?'w':'r');
+    const col = r.code==='OK'?'var(--good)':(r.code==='REVIEW'?'var(--warn)':'var(--crit)');
+    return '<tr><td>'+clock(r.ts)+'</td><td>'+r.id+(r.kind==='clone'?' *':'')+'</td><td>'+STATIONS[r.edgeId].name.split(' ')[0]+'</td>'+
+      '<td>'+r.c+'</td><td class="'+(r.online?'on':'off')+'">'+(r.online?'net':'offl')+'</td>'+
+      '<td class="'+cls+'"><span class="dot-res" style="background:'+col+'"></span>'+r.code+'</td></tr>';
+  }).join('');
+  return '<table class="lg"><thead><tr><th>time</th><th>card</th><th>stn</th><th>ctr</th><th>mode</th><th>result</th></tr></thead><tbody>'+rows+'</tbody></table>';
+}
+function renderDeny(){
+  const buffered=S.edges.A.buffer.length+S.edges.B.buffer.length;
+  const hd='<div class="deny-hd">signed deny-list <span class="v">v'+S.backend.denyVer+'</span> · HMAC-SHA256 (ops key)<br>sig <span class="sig">'+(S.denySig||'').slice(0,40)+'…</span><br>verified at gates ✓</div>';
+  const bar='<div class="reconcile-bar'+(buffered?' hot':'')+'">'+
+      '<button class="btn primary" id="reconcileBtn"'+(S.online&&buffered?'':' disabled')+'>Reconcile gates</button>'+
+      '<span class="txt">'+(buffered? '<b>'+buffered+' offline tap(s)</b> buffered at the gates, awaiting merge.' : (S.online?'Nothing buffered. Take gates offline and tap to build a backlog.':'Restore the link, then reconcile.'))+'</span>'+
+    '</div>';
+  let list;
+  if(!S.backend.deny.size) list='<div class="empty">No revoked cards yet. Clones land here once confirmed.</div>';
+  else list=[...S.backend.deny].map(id=>'<div class="deny-row"><span class="id">'+id+'</span><span class="rsn">'+(S.denyDetail[id]||'revoked')+'</span></div>').join('');
+  return hd+list+bar;
+}
+
+function clock(ts){ const d=new Date(ts); return d.toTimeString().slice(0,8); }
+
+/* ================= EVENTS ================= */
+let busy=false;
+document.addEventListener('click', async e=>{
+  const tapBtn=e.target.closest('[data-tap]');
+  const cloneBtn=e.target.closest('[data-clone]');
+  const tab=e.target.closest('.tab');
+  if(tab){ S.tab=tab.dataset.tab; renderPanel(); return; }
+  if(cloneBtn){ await cloneMedia(cloneBtn.dataset.clone); return; }
+  if(e.target.closest('#reconcileBtn')){ reconcile(); return; }
+  if(tapBtn && !busy){
+    busy=true;
+    const m=S.media.find(x=>x.mid===tapBtn.dataset.tap);
+    await rawTap(m, tapBtn.dataset.edge);
+    renderAll();
+    busy=false;
+    return;
+  }
+});
+el('netSwitch').addEventListener('click', ()=>{
+  S.online=!S.online;
+  if(!S.online) S.flags.wentOffline=true;
+  if(S.online){ /* link restored; gates keep their last-distributed deny-list until reconcile */ }
+  toast(S.online?'Gate link restored':'Gates offline — validating locally & buffering');
+  renderAll();
+});
+el('resetBtn').addEventListener('click', async ()=>{ await boot(); toast('Demo reset to initial state'); });
+
+/* ---------- theme: explicit light/dark, remembered per viewer ---------- */
+const THEME_KEY='tapguard.theme';
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  document.querySelectorAll('[data-theme-set]').forEach(b=>
+    b.setAttribute('aria-pressed', b.dataset.themeSet===t ? 'true':'false'));
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+}
+document.addEventListener('click', e=>{
+  const b=e.target.closest('[data-theme-set]');
+  if(b) applyTheme(b.dataset.themeSet);
+});
+let savedTheme=null;
+try{ savedTheme=localStorage.getItem(THEME_KEY); }catch(e){}
+applyTheme(savedTheme==='light'||savedTheme==='dark' ? savedTheme : 'dark');
+
+let toastT;
+function toast(msg){ const t=el('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2600); }
+
+boot();
+</script>

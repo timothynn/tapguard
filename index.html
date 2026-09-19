@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>TapGuard</title>
+<meta name="description" content="Offline-first transit fare validation with live clone detection, for the Nairobi Metro Phase I and BRT context.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+:root{
+  --bg:#0b0e14; --bg2:#0f131b; --surface:#141925; --surface2:#1a2130;
+  --line:#242c3b; --line2:#323c4f; --text:#e7ebf3; --muted:#94a1b8; --faint:#66738a;
+  --accent:#6f7dff; --accent-2:#94a0ff; --accent-ink:#0b0e14;
+  --good:#31d18e; --crit:#ff5d6b; --warn:#f5b53d;
+  --shadow:0 18px 44px -24px rgba(0,0,0,.78);
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  --sans:'IBM Plex Sans',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  --disp:'Archivo','IBM Plex Sans',system-ui,sans-serif;
+}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){
+  --bg:#f2f4f8; --bg2:#eaeef4; --surface:#ffffff; --surface2:#f6f8fb;
+  --line:#e2e7ef; --line2:#ccd5e2; --text:#0f1726; --muted:#54607a; --faint:#7d8aa1;
+  --accent:#4a54e0; --accent-2:#3a43c9; --accent-ink:#ffffff;
+  --good:#0b8f5c; --crit:#d32f3f; --warn:#9a6508;
+  --shadow:0 14px 34px -22px rgba(15,25,45,.34);
+}}
+:root[data-theme="light"]{
+  --bg:#f2f4f8; --bg2:#eaeef4; --surface:#ffffff; --surface2:#f6f8fb;
+  --line:#e2e7ef; --line2:#ccd5e2; --text:#0f1726; --muted:#54607a; --faint:#7d8aa1;
+  --accent:#4a54e0; --accent-2:#3a43c9; --accent-ink:#ffffff;
+  --good:#0b8f5c; --crit:#d32f3f; --warn:#9a6508;
+  --shadow:0 14px 34px -22px rgba(15,25,45,.34);
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:15px;line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  background-image:radial-gradient(1100px 560px at 84% -14%, color-mix(in srgb,var(--accent) 10%,transparent), transparent 62%)}
+.wrap{max-width:900px;margin:0 auto;padding-block:34px 48px;padding-left:20px;padding-right:20px}
+h1,h2,h3{margin:0;text-wrap:balance}
+a{color:var(--accent-2)}
+.head{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.logo{width:48px;height:48px;border-radius:13px;display:grid;place-items:center;flex:none;
+  background:radial-gradient(120% 120% at 30% 20%,var(--accent-2),var(--accent));color:var(--accent-ink)}
+.logo svg{width:27px;height:27px}
+h1{font-family:var(--disp);font-size:34px;font-weight:800;letter-spacing:-.8px;line-height:1}
+.chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent-2);
+  border:1px solid var(--line2);border-radius:999px;padding:4px 10px;background:color-mix(in srgb,var(--accent) 10%,transparent)}
+.themebtn{margin-left:auto;border:1px solid var(--line2);background:var(--surface2);color:var(--muted);
+  border-radius:10px;padding:8px 12px;font-family:inherit;font-size:12px;font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:7px}
+.themebtn:hover{color:var(--text);border-color:var(--accent)}
+.themebtn svg{width:14px;height:14px}
+.lede{margin:16px 0 0;font-size:17px;color:var(--muted);max-width:64ch}
+.lede b{color:var(--text);font-weight:600}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
+@media (max-width:680px){.cards{grid-template-columns:1fr}}
+.c{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:16px;
+  background:var(--surface);box-shadow:var(--shadow);padding:20px;transition:.15s}
+.c:hover{border-color:var(--accent);transform:translateY(-2px)}
+.c .k{font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.c h2{font-family:var(--disp);font-size:20px;font-weight:800;letter-spacing:-.3px;margin-top:5px}
+.c p{margin:8px 0 0;font-size:13.5px;color:var(--muted);line-height:1.55}
+.c .go{margin-top:14px;font-size:13px;font-weight:700;color:var(--accent-2);display:inline-flex;align-items:center;gap:6px}
+.c .go svg{width:14px;height:14px}
+.sec{margin-top:32px;border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:20px;box-shadow:var(--shadow)}
+.sec h3{font-family:var(--disp);font-size:16px;margin-bottom:12px}
+.steps{margin:0;padding-left:20px;font-size:14px;color:var(--muted)}
+.steps li{margin-bottom:5px}
+.steps li b{color:var(--text);font-weight:600}
+pre{background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;overflow-x:auto;
+  font-family:var(--mono);font-size:12.5px;color:var(--text);margin:12px 0 0}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:6px}
+@media (max-width:680px){.grid3{grid-template-columns:1fr}}
+.m{font-size:13px;color:var(--muted);line-height:1.55}
+.m b{display:block;color:var(--text);font-family:var(--mono);font-size:10px;letter-spacing:.09em;
+  text-transform:uppercase;margin-bottom:4px;font-weight:600}
+footer{margin-top:28px;font-family:var(--mono);font-size:11px;color:var(--faint);line-height:1.7;
+  border-top:1px solid var(--line);padding-top:16px}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="head">
+    <div class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.2 8 11 4.6-2.8 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
+    <div>
+      <h1>TapGuard</h1>
+      <div style="margin-top:6px"><span class="chip">Everyday track · fare validation</span></div>
+    </div>
+    <button class="themebtn" id="themeBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8Z"/></svg>
+      <span id="themeLbl">Dark</span>
+    </button>
+  </div>
+
+  <p class="lede">Offline-first transit fare validation with live clone detection, for the
+  <b>Nairobi Metropolitan Mass Rapid Transit System</b>. A gate has to decide in under a second
+  whether a tap is genuine — in a tunnel, with no network. That is exactly where cloned cards win.</p>
+
+  <div class="cards">
+    <a class="c" href="tapguard.html">
+      <div class="k">Interactive</div>
+      <h2>Operator console</h2>
+      <p>Drive it yourself. Two station gates, a rider wallet, a network switch and a reconciliation
+      backend. A seven-step checklist advances as you go.</p>
+      <span class="go">Open the console
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+    </a>
+    <a class="c" href="tapguard-simulation.html">
+      <div class="k">88 seconds · narrated</div>
+      <h2>Field simulation</h2>
+      <p>Watch the whole scenario play out as an animated, narrated walkthrough with synthesised
+      station audio. Scrub, jump by chapter, or mute the voice and narrate it live.</p>
+      <span class="go">Play the simulation
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+    </a>
+  </div>
+
+  <div class="sec">
+    <h3>What the gate checks, in order</h3>
+    <ol class="steps">
+      <li><b>Signed deny-list</b> — is this card revoked? Works with no network.</li>
+      <li><b>HMAC-SHA256 signature</b> — is the media genuine? Verified on the gate itself.</li>
+      <li><b>Counter monotonicity</b> — is this a replayed tap token?</li>
+      <li><b>Impossible travel</b> — is this card also at another station, faster than physics allows?</li>
+    </ol>
+    <pre>token = HMAC-SHA256( key_card , cardID | counter | stationID | timestamp )</pre>
+  </div>
+
+  <div class="sec">
+    <h3>The gap, and how it closes</h3>
+    <div class="grid3">
+      <div class="m"><b>Networked</b>Gates share a last-seen table, so a clone at a second station is refused in real time.</div>
+      <div class="m"><b>Offline</b>Each gate is an island and legitimately accepts. This is the moment a clone pays off.</div>
+      <div class="m"><b>Reconciled</b>Buffers merge, the collision is arithmetic, the card is revoked and the signed deny-list is pushed everywhere.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <h3>Verify the logic yourself</h3>
+    <p class="m" style="margin:0">The rules are checked independently of the interface. This replays the full
+    scenario and asserts every outcome.</p>
+    <pre>node verify/detection-logic.mjs</pre>
+  </div>
+
+  <footer>
+    Reference implementation — keys are generated in-page for demonstration and are not production key management.<br>
+    Nairobi Metro Phase I, CBD core · KSh 50 flat fare · minimum plausible transfer 120s · MIT licensed.
+  </footer>
+</div>
+
+<script>
+const KEY='tapguard.theme';
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('themeLbl').textContent = t==='dark'?'Dark':'Light';
+  try{ localStorage.setItem(KEY,t); }catch(e){}
+}
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  setTheme(document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark');
+});
+let s=null; try{ s=localStorage.getItem(KEY); }catch(e){}
+setTheme(s==='light'||s==='dark'?s:'dark');
+</script>
+</body>
+</html>
