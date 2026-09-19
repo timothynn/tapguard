@@ -55,9 +55,6 @@ a{color:var(--accent)}
 .logo svg{width:23px;height:23px}
 .brand h1{font-family:var(--disp);font-size:21px;letter-spacing:-.3px;font-weight:800;line-height:1}
 .brand p{margin:2px 0 0;color:var(--muted);font-size:12px}
-.track-chip{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--accent-2);border:1px solid var(--line2);border-radius:999px;padding:3px 9px;
-  background:color-mix(in srgb,var(--accent) 10%,transparent)}
 .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .netbox{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;
   padding:7px 12px;background:var(--surface2)}
@@ -221,7 +218,7 @@ a{color:var(--accent)}
 /* ---- presenter mode: legible from the back of a room ---- */
 .presenting .wrap{max-width:1560px}
 .presenting .grid{grid-template-columns:330px 1fr 400px;gap:18px}
-.presenting .mech,.presenting .foot{display:none}
+.presenting .foot{display:none}
 .presenting .btn,.presenting .seg-b{font-size:14px}
 .presenting .brand h1{font-size:25px}
 .presenting .brand p{font-size:13.5px}
@@ -336,15 +333,8 @@ a{color:var(--accent)}
 .reconcile-bar .txt{font-size:12px;color:var(--muted);line-height:1.35}
 .reconcile-bar .txt b{color:var(--text)}
 
-/* mechanism footer */
-.mech{margin-top:16px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);padding:16px}
-.mech h3{font-family:var(--disp);font-size:14px;margin-bottom:10px}
-.mech .row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media (max-width:720px){.mech .row{grid-template-columns:1fr}}
-.mech .m{font-size:12.5px;color:var(--muted);line-height:1.55}
-.mech .m b{color:var(--text);display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;font-weight:600}
-.say{margin-top:12px;padding:11px 13px;border-radius:11px;background:color-mix(in srgb,var(--accent) 10%,transparent);border:1px solid var(--line2);font-size:12.5px}
-.say b{color:var(--accent-2)}
+/* technical reference footer */
+@media (max-width:720px){}
 
 /* footer */
 .foot{margin-top:14px;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--bg2);
@@ -369,8 +359,8 @@ a{color:var(--accent)}
     <div class="brand">
       <div class="logo" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.2 8 11 4.6-2.8 8-6 8-11V5l-8-3Z"/><path d="m9 12 2 2 4-4"/></svg></div>
       <div>
-        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><h1>TapGuard</h1><span class="track-chip">Everyday · fare validation</span></div>
-        <p>Offline-first fare validation &amp; clone defense — Nairobi Metro Phase I &amp; BRT</p>
+        <div style="display:flex;align-items:center;gap:9px;flex-wrap:wrap"><h1>TapGuard</h1></div>
+        <p>Gate validation console · CBD core</p>
       </div>
     </div>
     <div class="controls">
@@ -462,22 +452,12 @@ a{color:var(--accent)}
               <button class="endc" data-k="END">Clear / End</button>
             </div>
           </div>
-          <div class="hint">No smartphone needed. <b>Dial *384#</b>, choose <b>3</b> to report Otieno's
-          card lost, then tap that card at a gate — it is already refused.</div>
+          <div class="hint">Dial <b>*384#</b> and press Send. Option <b>3</b> blocks the registered card at every gate.</div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="mech">
-    <h3>What the gate is actually checking</h3>
-    <div class="row">
-      <div class="m"><b>Signed tap, offline</b>Every tap is an HMAC-SHA256 token over card ID, a rising counter, station and time. Gates verify it with no network. Forged or replayed media is refused at the gate.</div>
-      <div class="m"><b>Impossible travel</b>Networked gates share a last-seen table. One card at two stations faster than a human can travel is a clone — blocked in real time.</div>
-      <div class="m"><b>Offline reconcile</b>In a tunnel or on a matatu, gates run offline and buffer taps. On reconnect they merge, catch cross-gate clones, and push a signed deny-list to every gate.</div>
-    </div>
-    <div class="say">Open your demo with: <b>"Everyday track — TapGuard. The recurring job is fare validation and clone triage. Today a conductor or gate does it by eye; here's the machine doing it in under a second, even offline."</b></div>
-  </div>
 
   <footer class="foot">
     <div class="fl"><span class="fk">Crypto</span> HMAC-SHA256 via WebCrypto · per-card keys · signed deny-list</div>
