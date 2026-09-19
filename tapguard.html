@@ -589,8 +589,10 @@ async function validate(edgeId, tap){
   if(denySet.has(tap.id)){
     res = mkRes('reject','REFUSED','Card '+tap.id+' is on the signed deny-list. Media revoked.', tap, 'REVOKED');
     if(isClone(tap)) S.protected += FARE;
-    addIncident('good','Revoked card refused', tap.holder+' ('+tap.id+') was blocked at '+STATIONS[edgeId].name+' — already revoked on deny-list v'+ (online?S.backend.denyVer:S.edges[edgeId].denyVer) +'.',
-      ['card '+tap.id+' · deny-list hit · '+STATIONS[edgeId].name], 'None — clone permanently blocked at every gate.');
+    addIncident('good','Revoked card refused', tap.holder+' ('+tap.id+') was refused at '+STATIONS[edgeId].name+' — already revoked on deny-list v'+ (online?S.backend.denyVer:S.edges[edgeId].denyVer) +'.',
+      ['card '+tap.id+' · deny-list hit · '+STATIONS[edgeId].name,
+       'revoked because: '+(S.denyDetail[tap.id]||'revoked by operator')],
+      'None — this card is refused at every gate, online or offline.');
   }
   // 2. forged signature
   else if(tap.mac !== await hmacHex(keyById[tap.id], tap.id+'|'+tap.c+'|'+tap.edgeId+'|'+tap.ts)){
@@ -1031,7 +1033,7 @@ function renderTimeline(){
   // axis
   for(let i=0;i<=TICKS;i++){
     const x=GUT+(plotW*i/TICKS), t=t0+((t1-t0)*i/TICKS);
-    const lab=compact? clock(t).slice(0,5) : clock(t);
+    const lab=compact? clock(t).slice(3) : clock(t);   // mm:ss — spans here are short
     s+=`<line x1="${x}" y1="${AXIS-6}" x2="${x}" y2="${H-8}" stroke="var(--line)" stroke-width="1"/>`;
     s+=`<text class="tl-tick" x="${x}" y="${AXIS-10}" text-anchor="middle">${lab}</text>`;
   }
