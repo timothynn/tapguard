@@ -264,7 +264,7 @@ a{color:var(--accent)}
 .presenting .tl-key{font-size:11.5px}
 
 /* card-journey timeline */
-#timeline svg{display:block;width:100%;height:auto;overflow:visible}
+#timeline svg{display:block;width:100%;height:auto;overflow:hidden}
 #timeline text{font-family:var(--mono)}
 .tl-id{fill:var(--text);font-size:11px;font-weight:600}
 .tl-sub{fill:var(--faint);font-size:9px}
@@ -1069,10 +1069,13 @@ function renderTimeline(){
       const mx=(prev.x+cur.x)/2;
       s+=`<path d="M${prev.x},${prev.y} Q${mx},${ly} ${cur.x},${cur.y}" fill="none" stroke="var(--crit)"
            stroke-width="2" ${blocked?'stroke-dasharray="4 3"':''} opacity=".95"/>`;
-      const txt=Math.max(1,Math.round(dt/1000))+'s · '+(blocked?'blocked live':'impossible');
+      const txt=Math.max(1,Math.round(dt/1000))+'s · '+
+        (blocked ? (compact?'blocked':'blocked live') : 'impossible');
       const w=txt.length*CHARW+12;
-      s+=`<rect x="${mx-w/2}" y="${ly-8}" width="${w}" height="16" rx="8" fill="var(--crit)"/>`;
-      s+=`<text class="tl-arclbl" x="${mx}" y="${ly+3.5}" text-anchor="middle">${txt}</text>`;
+      // keep the pill inside the viewBox, or it paints outside the card
+      const lx=Math.min(Math.max(mx, w/2+2), W-w/2-2);
+      s+=`<rect x="${lx-w/2}" y="${ly-8}" width="${w}" height="16" rx="8" fill="var(--crit)"/>`;
+      s+=`<text class="tl-arclbl" x="${lx}" y="${ly+3.5}" text-anchor="middle">${txt}</text>`;
     }
 
     // marks
