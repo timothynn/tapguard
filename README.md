@@ -32,13 +32,17 @@ A fare validator therefore has to answer, in under a second and with no network:
 
 Two self-contained HTML pages. No build step, no dependencies, no server.
 
+**Live:** https://timothynn.is-a.dev/tapguard/
+
 | File | What it does |
 |---|---|
-| [`tapguard.html`](tapguard.html) | The **operator console** — a live, interactive validator you drive yourself. Two station gates, a rider wallet, a network switch, a reconciliation backend and a fraud-triage feed. |
-| [`tapguard-simulation.html`](tapguard-simulation.html) | The **field simulation** — an 88-second narrated, animated walkthrough of the full scenario, with synthesised sound effects and spoken narration. |
-| [`index.html`](index.html) | A landing page linking the two. |
+| [`tapguard.html`](tapguard.html) | The **operator console** — a live, interactive validator you drive yourself. Two station gates, a rider wallet, a USSD handset on `*384#`, a network switch, a reconciliation backend and a fraud-triage feed. |
+| [`tapguard-simulation.html`](tapguard-simulation.html) | **Field simulation** — an 88-second narrated animation of the clone scenario from the operator's side, with synthesised sound and spoken narration. |
+| [`tapguard-ussd.html`](tapguard-ussd.html) | **Lost Card, No Smartphone** — a 90-second narrated animation of the same system from the rider's side: a card lost on a matatu, blocked over USSD from a feature phone, refused at the gate. Uses real DTMF keypad tones. |
+| [`verify/detection-logic.mjs`](verify/detection-logic.mjs) | An independent Node check that replays the whole scenario and asserts every outcome. |
+| [`index.html`](index.html) | A landing page linking the three. |
 
-Open any of them directly in a browser. That is the whole setup.
+Open any of them directly in a browser. No build step, no dependencies, no server.
 
 ## How detection actually works
 
