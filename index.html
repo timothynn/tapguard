@@ -54,8 +54,9 @@ h1{font-family:var(--disp);font-size:34px;font-weight:800;letter-spacing:-.8px;l
 .themebtn svg{width:14px;height:14px}
 .lede{margin:16px 0 0;font-size:17px;color:var(--muted);max-width:64ch}
 .lede b{color:var(--text);font-weight:600}
-.cards{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:28px}
-@media (max-width:680px){.cards{grid-template-columns:1fr}}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:28px}
+@media (max-width:900px){.cards{grid-template-columns:1fr 1fr}}
+@media (max-width:620px){.cards{grid-template-columns:1fr}}
 .c{display:block;text-decoration:none;color:inherit;border:1px solid var(--line);border-radius:16px;
   background:var(--surface);box-shadow:var(--shadow);padding:20px;transition:.15s}
 .c:hover{border-color:var(--accent);transform:translateY(-2px)}
@@ -106,6 +107,14 @@ footer{margin-top:28px;font-family:var(--mono);font-size:11px;color:var(--faint)
       <p>Drive it yourself. Two station gates, a rider wallet, a USSD handset on <b>*384#</b>, a network
       switch and a reconciliation backend. A seven-step checklist advances as you go.</p>
       <span class="go">Open the console
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
+    </a>
+    <a class="c" href="tapguard-ussd.html">
+      <div class="k">90 seconds · narrated</div>
+      <h2>Lost card, no smartphone</h2>
+      <p>A rider blocks a lost card over USSD on a feature phone and the gates refuse it minutes
+      later. Real DTMF keypad tones.</p>
+      <span class="go">Play the USSD simulation
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h13M12.5 5.5 19 12l-6.5 6.5"/></svg></span>
     </a>
     <a class="c" href="tapguard-simulation.html">
