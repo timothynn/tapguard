@@ -218,6 +218,68 @@ a{color:var(--accent)}
 .gate .gfoot{display:flex;gap:16px;padding:9px 15px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:var(--faint);flex-wrap:wrap}
 .gate .gfoot b{color:var(--muted);font-weight:600}
 
+/* ---- presenter mode: legible from the back of a room ---- */
+.presenting .wrap{max-width:1560px}
+.presenting .grid{grid-template-columns:330px 1fr 400px;gap:18px}
+.presenting .mech,.presenting .foot{display:none}
+.presenting .btn,.presenting .seg-b{font-size:14px}
+.presenting .brand h1{font-size:25px}
+.presenting .brand p{font-size:13.5px}
+.presenting .ribbon .seg-i{font-size:12px;padding:11px 16px}
+.presenting .ribbon .seg-i b{font-size:14px}
+.presenting .card .hd h2{font-size:13.5px}
+.presenting .card .hd .count{font-size:12.5px}
+.presenting .steps li{font-size:14.5px;padding:10px 10px}
+.presenting .steps li .n{width:23px;height:23px;font-size:12.5px}
+.presenting .media .who{font-size:15px}
+.presenting .media .id{font-size:12.5px}
+.presenting .media .meta{font-size:13px}
+.presenting .tapbtn{font-size:14px;padding:11px 6px}
+.presenting .tapbtn small{font-size:11px}
+.presenting .clonebtn{font-size:13.5px;padding:11px}
+.presenting .gate .stn{font-size:20px}
+.presenting .gate .line{font-size:12px}
+.presenting .screen{min-height:168px}
+.presenting .screen .big{font-size:46px}
+.presenting .screen .big .ic{width:50px;height:50px}
+.presenting .screen .big .ic svg{width:26px;height:26px}
+.presenting .screen .rsn{font-size:16.5px;max-width:58ch}
+.presenting .screen .sub{font-size:13px}
+.presenting .gate .gfoot{font-size:12.5px}
+.presenting .gate .modepill{font-size:11.5px}
+.presenting .tile .k{font-size:11.5px}
+.presenting .tile .v{font-size:29px}
+.presenting .tab{font-size:14px;padding:8px 13px}
+.presenting .lg{font-size:14px}
+.presenting .lg th{font-size:11.5px}
+.presenting .inc .it{font-size:15px}
+.presenting .inc .desc{font-size:14.5px}
+.presenting .inc .ev{font-size:12.5px}
+.presenting .inc .act{font-size:13.5px}
+.presenting .deny-hd,.presenting .deny-row .id{font-size:13px}
+.presenting .lcd{font-size:13.5px;min-height:186px}
+.presenting .keys button{font-size:17px;padding:9px 2px}
+.presenting .tl-id{font-size:13px} .presenting .tl-sub{font-size:11px}
+.presenting .tl-tick{font-size:11px} .presenting .tl-arclbl{font-size:11px}
+.presenting .tl-key{font-size:11.5px}
+
+/* card-journey timeline */
+#timeline svg{display:block;width:100%;height:auto;overflow:visible}
+#timeline text{font-family:var(--mono)}
+.tl-id{fill:var(--text);font-size:11px;font-weight:600}
+.tl-sub{fill:var(--faint);font-size:9px}
+.tl-trk{fill:var(--faint);font-size:8.5px;letter-spacing:.08em}
+.tl-tick{fill:var(--faint);font-size:9px}
+.tl-arclbl{fill:#fff;font-size:9.5px;font-weight:600}
+.tl-empty{color:var(--faint);font-size:12.5px;text-align:center;padding:26px 12px}
+.tl-key{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:11px;
+  font-family:var(--mono);font-size:10px;color:var(--faint);letter-spacing:.04em}
+.tl-key span{display:inline-flex;align-items:center;gap:6px}
+.tl-key .sw{width:9px;height:9px;border-radius:50%;flex:none}
+.tl-key .sw.ok{background:var(--good)} .tl-key .sw.bad{background:var(--crit)}
+.tl-key .sw.arc{width:16px;height:2px;border-radius:0;background:var(--crit)}
+.tl-key .tl-note{flex:1;min-width:220px;color:var(--faint);opacity:.85;line-height:1.5;letter-spacing:0}
+
 /* revenue tiles */
 .tiles{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tile{border:1px solid var(--line);border-radius:12px;padding:11px 12px;background:var(--surface2)}
@@ -320,6 +382,8 @@ a{color:var(--accent)}
         <button class="seg-b" data-theme-set="dark" aria-pressed="true" title="Dark theme">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.5 14.3A8.5 8.5 0 1 1 9.7 3.5a6.8 6.8 0 0 0 10.8 10.8Z"/></svg>Dark</button>
       </div>
+      <button id="presentBtn" class="btn ghost" aria-pressed="false" title="Scale up for a projector">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4.5h18v11H3z"/><path d="M12 15.5V20M8.5 20h7"/></svg>Presenter</button>
       <button id="resetBtn" class="btn ghost"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 2.6-6.4"/><path d="M3 4.5V10h5.5"/></svg>Reset</button>
     </div>
   </div>
@@ -333,17 +397,50 @@ a{color:var(--accent)}
         <div class="hd"><h2>Run the demo</h2><span class="count" id="stepCount">0 / 7</span></div>
         <div class="bd"><ol class="steps" id="steps"></ol></div>
       </div>
-      <div class="card" style="margin-bottom:16px">
+      <div class="card">
         <div class="hd"><h2>Fare media</h2><span class="count">rider wallet</span></div>
         <div class="bd" id="wallet"></div>
       </div>
+    </div>
 
-      <div class="phone">
-        <div class="hd"><h2>Rider USSD</h2><span class="code">*384#</span></div>
+    <!-- CENTER: gates + tiles -->
+    <div class="col-center">
+      <div class="gates" id="gates"></div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="hd"><h2>Card journeys</h2><span class="count" id="tlCount"></span></div>
         <div class="bd">
+          <div id="timeline"></div>
+          <div class="tl-key">
+            <span><i class="sw ok"></i>accepted</span>
+            <span><i class="sw bad"></i>refused</span>
+            <span><i class="sw arc"></i>impossible travel</span>
+            <span class="tl-note">Upper track = Railways · lower track = Upper Hill. Marks are nudged
+            apart where taps are too close to draw; the gap labels are exact.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:16px">
+        <div class="hd"><h2>Revenue protection</h2><span class="count">this session</span></div>
+        <div class="bd"><div class="tiles" id="tiles"></div></div>
+      </div>
+    </div>
+
+    <!-- RIGHT: ops console -->
+    <div class="col-ops">
+      <div class="card">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" data-tab="inc" aria-selected="true">Incidents<span class="b" id="incB">0</span></button>
+          <button class="tab" role="tab" data-tab="lg" aria-selected="false">Ledger</button>
+          <button class="tab" role="tab" data-tab="deny" aria-selected="false">Deny-list<span class="b" id="denyB">0</span></button>
+          <button class="tab" role="tab" data-tab="ussd" aria-selected="false">USSD</button>
+        </div>
+        <div class="panel" id="panel"></div>
+        <div class="panel ussd-wrap" id="panelUssd" hidden>
           <div class="handset">
-            <div class="lcd" id="lcd"></div>
-            <div class="keys" id="keys">
+            <div class="lcd" id="lcd" role="status" aria-live="polite"></div>
+            <div class="keys">
               <button data-k="1">1<small>&nbsp;</small></button>
               <button data-k="2">2<small>ABC</small></button>
               <button data-k="3">3<small>DEF</small></button>
@@ -365,27 +462,6 @@ a{color:var(--accent)}
           <div class="hint">No smartphone needed. <b>Dial *384#</b>, choose <b>3</b> to report Otieno's
           card lost, then tap that card at a gate — it is already refused.</div>
         </div>
-      </div>
-    </div>
-
-    <!-- CENTER: gates + tiles -->
-    <div class="col-center">
-      <div class="gates" id="gates"></div>
-      <div class="card" style="margin-top:16px">
-        <div class="hd"><h2>Revenue protection</h2><span class="count">this session</span></div>
-        <div class="bd"><div class="tiles" id="tiles"></div></div>
-      </div>
-    </div>
-
-    <!-- RIGHT: ops console -->
-    <div class="col-ops">
-      <div class="card">
-        <div class="tabs" role="tablist">
-          <button class="tab" role="tab" data-tab="inc" aria-selected="true">Incidents<span class="b" id="incB">0</span></button>
-          <button class="tab" role="tab" data-tab="lg" aria-selected="false">Tap ledger</button>
-          <button class="tab" role="tab" data-tab="deny" aria-selected="false">Deny-list<span class="b" id="denyB">0</span></button>
-        </div>
-        <div class="panel" id="panel"></div>
       </div>
     </div>
   </div>
@@ -799,6 +875,8 @@ function startUTimer(){
 function stopUTimer(){ if(uTimer){ clearInterval(uTimer); uTimer=null; } }
 
 function renderPhone(){
+  const lcd=el('lcd');
+  if(!lcd || el('panelUssd').hidden) return;   // handset tab not on screen
   const bars=S.online?'▮▮▮▮':'▮▯▯▯';
   const head='<div class="net"><span>SAFARI-NET '+bars+'</span><span>'+
     (U.open?('USSD '+String(Math.floor(U.left/60))+':'+String(U.left%60).padStart(2,'0')):'Ready')+'</span></div>';
@@ -807,12 +885,12 @@ function renderPhone(){
   else body='TapGuard Metro\n\nDial '+USSD_CODE+' and press\nSend.\n\nRegistered to\n'+USSD_MSISDN+'\ncard '+UID;
   const notice=U.notice? '\n\n'+U.notice : '';
   const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
-  el('lcd').innerHTML = head + esc(body+notice) +
+  lcd.innerHTML = head + esc(body+notice) +
     '<div class="prompt">&gt; '+esc(U.input)+'<span class="cur"></span></div>';
 }
 
 /* ================= RENDER ================= */
-function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTiles(); renderPanel(); renderPhone(); }
+function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTimeline(); renderTiles(); renderPanel(); }
 
 function renderRibbon(){
   const buffered = S.edges.A.buffer.length + S.edges.B.buffer.length;
@@ -902,7 +980,7 @@ function renderGates(){
     div.innerHTML =
       '<div class="ghd"><div><div class="stn">'+stn.name+'</div><div class="line">'+stn.line+'</div></div>'+
         '<div class="modepill'+(S.online?'':' off')+'"><span class="dot"></span>'+(S.online?'networked':'offline')+'</div></div>'+
-      '<div class="screen '+scr.cls+' flash">'+
+      '<div class="screen '+scr.cls+' flash" role="status" aria-live="polite" aria-atomic="true">'+
         (scr.ic?'<div class="big"><span class="ic">'+scr.ic+'</span>'+scr.big+'</div>':'<div class="big">'+scr.big+'</div>')+
         '<div class="rsn">'+scr.rsn+'</div>'+ (scr.sub?'<div class="sub">'+scr.sub+'</div>':'')+
       '</div>'+
@@ -923,6 +1001,82 @@ function screenFor(r){
   return {cls:'reject', ic:SVG_NO, big:r.big, rsn:r.rsn, sub:'code '+r.code+' · card '+r.tap.id};
 }
 
+/* ---------- card journeys: one lane per card, arcs across impossible pairs ---------- */
+function renderTimeline(){
+  const host=el('timeline'); if(!host) return;
+  const recent=S.ledger.slice(0,12).reverse();          // oldest -> newest
+  if(!recent.length){
+    host.innerHTML='<div class="tl-empty">No taps yet. Tap a card to draw its journey.</div>';
+    el('tlCount').textContent=''; return;
+  }
+  const ids=[...new Set(recent.map(r=>r.id))];
+  const W=880, GUT=108, RIGHT=16, LANE=54, AXIS=24, MINGAP=30;
+  const plotW=W-GUT-RIGHT;
+  const tmin=Math.min(...recent.map(r=>r.ts));
+  const span=Math.max(Math.max(...recent.map(r=>r.ts))-tmin, 45000);
+  const pad=span*0.07, t0=tmin-pad, t1=tmin+span+pad;
+  const X=t=>GUT+((t-t0)/(t1-t0))*plotW;
+  const H=AXIS+ids.length*LANE+8;
+  const isOK=c=>c==='OK';
+  let s='', flagged=0;
+
+  // axis
+  for(let i=0;i<=4;i++){
+    const x=GUT+(plotW*i/4), t=t0+((t1-t0)*i/4);
+    s+=`<line x1="${x}" y1="${AXIS-6}" x2="${x}" y2="${H-8}" stroke="var(--line)" stroke-width="1"/>`;
+    s+=`<text class="tl-tick" x="${x}" y="${AXIS-11}" text-anchor="middle">${clock(t)}</text>`;
+  }
+
+  ids.forEach((id,li)=>{
+    const ly=AXIS+li*LANE+LANE/2;
+    const upY=ly-11, dnY=ly+11;
+    const holder=(S.accounts[id]||{}).holder||'';
+    s+=`<text class="tl-id" x="0" y="${ly-2}">${id}</text>`;
+    s+=`<text class="tl-sub" x="0" y="${ly+11}">${holder}</text>`;
+    s+=`<text class="tl-trk" x="${GUT-26}" y="${upY+3}">RLW</text>`;
+    s+=`<text class="tl-trk" x="${GUT-26}" y="${dnY+3}">UPH</text>`;
+    s+=`<line x1="${GUT}" y1="${upY}" x2="${W-RIGHT}" y2="${upY}" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 4"/>`;
+    s+=`<line x1="${GUT}" y1="${dnY}" x2="${W-RIGHT}" y2="${dnY}" stroke="var(--line)" stroke-width="1" stroke-dasharray="2 4"/>`;
+
+    // lay marks out, nudging apart anything too close to read
+    const lane=recent.filter(r=>r.id===id).map(r=>({...r, x:X(r.ts), y:r.edgeId==='A'?upY:dnY}));
+    for(let i=1;i<lane.length;i++)
+      if(lane[i].x < lane[i-1].x+MINGAP) lane[i].x = Math.min(W-RIGHT, lane[i-1].x+MINGAP);
+
+    // arcs first, so marks sit on top
+    for(let i=1;i<lane.length;i++){
+      const cur=lane[i];
+      if(cur.code!=='OK' && cur.code!=='CLONE') continue;
+      let prev=null;
+      for(let j=i-1;j>=0;j--) if(isOK(lane[j].code)){ prev=lane[j]; break; }
+      if(!prev || prev.edgeId===cur.edgeId) continue;
+      const dt=cur.ts-prev.ts;
+      if(dt>=MIN_TRAVEL_S*1000) continue;
+      const blocked = cur.code==='CLONE';
+      flagged++;
+      const mx=(prev.x+cur.x)/2;
+      s+=`<path d="M${prev.x},${prev.y} Q${mx},${ly} ${cur.x},${cur.y}" fill="none" stroke="var(--crit)"
+           stroke-width="2" ${blocked?'stroke-dasharray="4 3"':''} opacity=".95"/>`;
+      const txt=Math.max(1,Math.round(dt/1000))+'s · '+(blocked?'blocked live':'impossible');
+      const w=txt.length*5.6+12;
+      s+=`<rect x="${mx-w/2}" y="${ly-8}" width="${w}" height="16" rx="8" fill="var(--crit)"/>`;
+      s+=`<text class="tl-arclbl" x="${mx}" y="${ly+3.5}" text-anchor="middle">${txt}</text>`;
+    }
+
+    // marks
+    lane.forEach(r=>{
+      const ok=isOK(r.code), col=ok?'var(--good)':'var(--crit)';
+      const tip=`${r.id} · ${STATIONS[r.edgeId].name} · ${clock(r.ts)} · counter ${r.c} · ${r.code}${r.online?'':' · offline'}`;
+      s+=`<circle cx="${r.x}" cy="${r.y}" r="6.5" fill="${ok?col:'var(--surface)'}"
+           stroke="${col}" stroke-width="2.2"><title>${tip}</title></circle>`;
+      if(!r.online) s+=`<circle cx="${r.x+8}" cy="${r.y-8}" r="2.6" fill="var(--warn)"/>`;
+    });
+  });
+
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Timeline of card taps by station, linking taps too close together to be genuine">${s}</svg>`;
+  el('tlCount').textContent = recent.length+' taps'+(flagged?' · '+flagged+' flagged':'');
+}
+
 function renderTiles(){
   const t=el('tiles');
   t.innerHTML =
@@ -937,7 +1091,10 @@ function renderPanel(){
   el('incB').textContent=S.incidents.length;
   el('denyB').textContent=S.backend.deny.size;
   document.querySelectorAll('.tab').forEach(b=>b.setAttribute('aria-selected', b.dataset.tab===S.tab?'true':'false'));
-  const p=el('panel');
+  const p=el('panel'), pu=el('panelUssd');
+  const onUssd = S.tab==='ussd';
+  p.hidden=onUssd; pu.hidden=!onUssd;
+  if(onUssd){ renderPhone(); return; }
   if(S.tab==='inc') p.innerHTML = renderIncidents();
   else if(S.tab==='lg') p.innerHTML = renderLedger();
   else p.innerHTML = renderDeny();
@@ -1021,6 +1178,24 @@ el('resetBtn').addEventListener('click', async ()=>{
   stopUTimer(); U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:''};
   await boot(); toast('Demo reset to initial state');
 });
+
+/* ---------- presenter mode, remembered per viewer ---------- */
+const PRESENT_KEY='tapguard.presenter';
+function applyPresenter(on){
+  document.documentElement.classList.toggle('presenting', !!on);
+  el('presentBtn').setAttribute('aria-pressed', on?'true':'false');
+  try{ localStorage.setItem(PRESENT_KEY, on?'1':'0'); }catch(e){}
+  if(S) renderTimeline();   // the SVG re-lays out at the new width
+}
+el('presentBtn').addEventListener('click',()=>{
+  const on=!document.documentElement.classList.contains('presenting');
+  applyPresenter(on);
+  toast(on?'Presenter mode on — scaled up for a projector':'Presenter mode off');
+});
+let savedPresent=null;
+try{ savedPresent=localStorage.getItem(PRESENT_KEY); }catch(e){}
+applyPresenter(savedPresent==='1');
+window.addEventListener('resize',()=>{ if(S) renderTimeline(); });
 
 /* ---------- theme: explicit light/dark, remembered per viewer ---------- */
 const THEME_KEY='tapguard.theme';
