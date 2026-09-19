@@ -153,6 +153,41 @@ a{color:var(--accent)}
 .clonebtn:hover{background:var(--crit-bg)}
 .clonebtn:disabled{opacity:.4;cursor:not-allowed}
 
+/* ---- USSD handset (device colours are fixed: a phone screen ignores page theme) ---- */
+:root{ --lcd-bg:#0a1410; --lcd-fg:#7fe3b0; --lcd-dim:#3f7f62; --lcd-warn:#f0c674; }
+.phone{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow)}
+.phone .hd{display:flex;align-items:center;gap:9px;padding:13px 15px;border-bottom:1px solid var(--line)}
+.phone .hd h2{font-size:12px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.phone .hd .code{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--accent-2)}
+.phone .bd{padding:14px 15px}
+.handset{border-radius:16px;background:linear-gradient(180deg,#232b36,#141a22);padding:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.07), 0 6px 18px -10px rgba(0,0,0,.7)}
+.lcd{background:var(--lcd-bg);border-radius:8px;padding:10px 11px;min-height:150px;
+  font-family:var(--mono);font-size:11.5px;line-height:1.5;color:var(--lcd-fg);
+  white-space:pre-wrap;word-break:break-word;position:relative;
+  box-shadow:inset 0 0 0 1px rgba(127,227,176,.16), inset 0 0 22px rgba(0,0,0,.6)}
+.lcd .net{display:flex;justify-content:space-between;color:var(--lcd-dim);font-size:9.5px;
+  letter-spacing:.06em;margin-bottom:7px;padding-bottom:5px;border-bottom:1px solid rgba(127,227,176,.16)}
+.lcd .prompt{color:#fff;margin-top:8px}
+.lcd .cur{display:inline-block;width:6px;height:12px;background:var(--lcd-fg);vertical-align:-2px;
+  animation:cur 1s step-end infinite}
+@keyframes cur{50%{opacity:0}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:11px}
+.keys button{border:1px solid #39434f;background:linear-gradient(180deg,#2c3541,#222932);color:#e8edf3;
+  border-radius:8px;padding:6px 2px;font-family:var(--mono);font-size:14px;font-weight:600;line-height:1.05;
+  display:flex;flex-direction:column;align-items:center;gap:1px;transition:.1s}
+.keys button:hover{background:linear-gradient(180deg,#38424f,#2a323c)}
+.keys button:active{transform:translateY(1px)}
+.keys button small{font-size:7.5px;color:#8895a6;letter-spacing:.06em;font-weight:500}
+.soft{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.soft button{border:none;border-radius:8px;padding:8px;font-size:11.5px;font-weight:700;color:#fff;
+  font-family:var(--sans);letter-spacing:.02em}
+.soft .send{background:#1f9d57} .soft .send:hover{background:#23b263}
+.soft .endc{background:#b23a44} .soft .endc:hover{background:#c7434e}
+.phone .hint{margin-top:11px;font-size:11.5px;color:var(--muted);line-height:1.45;
+  border-left:2px solid var(--accent);padding-left:9px}
+.phone .hint b{color:var(--text);font-weight:600}
+
 /* validator gates */
 .gates{display:flex;flex-direction:column;gap:16px}
 .gate{border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
@@ -298,9 +333,38 @@ a{color:var(--accent)}
         <div class="hd"><h2>Run the demo</h2><span class="count" id="stepCount">0 / 7</span></div>
         <div class="bd"><ol class="steps" id="steps"></ol></div>
       </div>
-      <div class="card">
+      <div class="card" style="margin-bottom:16px">
         <div class="hd"><h2>Fare media</h2><span class="count">rider wallet</span></div>
         <div class="bd" id="wallet"></div>
+      </div>
+
+      <div class="phone">
+        <div class="hd"><h2>Rider USSD</h2><span class="code">*384#</span></div>
+        <div class="bd">
+          <div class="handset">
+            <div class="lcd" id="lcd"></div>
+            <div class="keys" id="keys">
+              <button data-k="1">1<small>&nbsp;</small></button>
+              <button data-k="2">2<small>ABC</small></button>
+              <button data-k="3">3<small>DEF</small></button>
+              <button data-k="4">4<small>GHI</small></button>
+              <button data-k="5">5<small>JKL</small></button>
+              <button data-k="6">6<small>MNO</small></button>
+              <button data-k="7">7<small>PQRS</small></button>
+              <button data-k="8">8<small>TUV</small></button>
+              <button data-k="9">9<small>WXYZ</small></button>
+              <button data-k="*">*<small>&nbsp;</small></button>
+              <button data-k="0">0<small>+</small></button>
+              <button data-k="#">#<small>&nbsp;</small></button>
+            </div>
+            <div class="soft">
+              <button class="send" data-k="SEND">Send</button>
+              <button class="endc" data-k="END">Clear / End</button>
+            </div>
+          </div>
+          <div class="hint">No smartphone needed. <b>Dial *384#</b>, choose <b>3</b> to report Otieno's
+          card lost, then tap that card at a gate — it is already refused.</div>
+        </div>
       </div>
     </div>
 
@@ -591,8 +655,164 @@ function addIncident(sev, title, desc, ev, act){
   S.incidents.unshift({sev, title, desc, ev, act, ts:now()});
 }
 
+/* ================= USSD =================
+   A feature-phone channel over the same state the gates use. Reporting a card
+   lost here revokes it and pushes the re-signed deny-list to every gate — or
+   queues it when the network is down, exactly as the gates behave. */
+const USSD_CODE='*384#', USSD_MSISDN='+254 7•• ••• 412', UID='K042';
+const SESSION_S=120;
+let U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:''};
+let uTimer=null;
+
+function uref(){ return 'TG'+Math.random().toString(36).slice(2,8).toUpperCase(); }
+function money(n){ return 'KSh '+n.toLocaleString('en-KE'); }
+function lastTapFor(id,accepted){
+  return S.ledger.find(r=>r.id===id && (accepted? r.code==='OK' : r.code!=='OK'));
+}
+const REFUSAL_REASON={
+  'REVOKED':'Card blocked (reported lost or revoked).',
+  'CLONE':'A duplicate of this card was used at another station.',
+  'REPLAY':'A repeated tap token was rejected.',
+  'BAD-SIG':'The card could not be verified as genuine.'
+};
+
+function uBody(){
+  const acct=S.accounts[UID];
+  const revoked=S.backend.deny.has(UID);
+  switch(U.node){
+    case 'root':
+      return 'TapGuard Metro\n'+
+        '1. Check balance\n2. Top up fare\n3. Report card lost\n'+
+        '4. Why was I refused?\n5. Last 3 trips\n0. Exit';
+    case 'balance': {
+      const t=lastTapFor(UID,true);
+      return 'Card '+UID+'\n'+acct.holder+'\n\nBalance '+money(acct.balance)+
+        (revoked?'\nSTATUS: BLOCKED':'\nStatus: Active')+
+        '\nLast trip: '+(t?STATIONS[t.edgeId].name.split(' ')[0]+' '+clock(t.ts):'none')+
+        '\n\n0. Back';
+    }
+    case 'topAmt': return 'Top up card '+UID+'\n\nEnter amount\n(KSh 20 - 5,000)\n\n0. Back';
+    case 'topConfirm':
+      return 'Top up '+money(U.amt)+'\nto card '+UID+'?\n\n(PIN step omitted in\nthis simulation)\n\n1. Confirm\n2. Cancel';
+    case 'topDone':
+      return 'Top-up successful.\n\n'+money(U.amt)+' added.\nNew balance '+money(acct.balance)+
+        '\nRef '+U.ref+'\n\n0. Back';
+    case 'lostConfirm':
+      if(revoked) return 'Card '+UID+' is already\nblocked.\n\n0. Back';
+      return 'Report card '+UID+'\nlost or stolen?\n\nThis blocks it at ALL\ngates immediately.\n\n1. Yes, block it\n2. No';
+    case 'lostDone':
+      return 'Card '+UID+' BLOCKED.\n\n'+
+        (S.online
+          ? 'Deny-list v'+S.backend.denyVer+' signed\nand pushed to all gates.'
+          : 'Gates are OFFLINE.\nBlock is queued and\napplies at next sync.')+
+        '\nRef '+U.ref+'\n\nFree replacement at\nany station with ID.\n\n0. Back';
+    case 'why': {
+      const r=lastTapFor(UID,false);
+      if(!r) return 'No refusals found for\ncard '+UID+'.\n\n0. Back';
+      return 'Refused at\n'+STATIONS[r.edgeId].name+'\n'+clock(r.ts)+'\n\n'+
+        (REFUSAL_REASON[r.code]||'Card refused.')+'\n\nCollect a free\nreplacement at any\nstation.\n\n0. Back';
+    }
+    case 'trips': {
+      const t=S.ledger.filter(r=>r.id===UID&&r.code==='OK').slice(0,3);
+      if(!t.length) return 'No trips recorded for\ncard '+UID+'.\n\n0. Back';
+      return 'Last trips — '+UID+'\n\n'+t.map((r,i)=>
+        (i+1)+'. '+STATIONS[r.edgeId].name.split(' ')[0]+' '+clock(r.ts)+'  '+money(FARE)).join('\n')+
+        '\n\n0. Back';
+    }
+    default: return '';
+  }
+}
+
+function uSubmit(){
+  const inp=U.input.trim(); U.input=''; U.left=SESSION_S; U.notice='';
+  const acct=S.accounts[UID];
+
+  if(!U.open){
+    if(inp===USSD_CODE){ U.open=true; U.node='root'; startUTimer(); }
+    else U.notice='Invalid code. Dial '+USSD_CODE;
+    renderPhone(); return;
+  }
+  const back=()=>{ U.node='root'; };
+
+  switch(U.node){
+    case 'root':
+      if(inp==='1') U.node='balance';
+      else if(inp==='2') U.node='topAmt';
+      else if(inp==='3') U.node='lostConfirm';
+      else if(inp==='4') U.node='why';
+      else if(inp==='5') U.node='trips';
+      else if(inp==='0'){ uEnd('Thank you for using\nTapGuard Metro.'); return; }
+      else U.notice='Invalid choice.';
+      break;
+    case 'balance': case 'why': case 'trips': case 'topDone': case 'lostDone':
+      if(inp==='0') back(); else U.notice='Invalid choice.';
+      break;
+    case 'topAmt': {
+      if(inp==='0'){ back(); break; }
+      const n=parseInt(inp,10);
+      if(!/^\d+$/.test(inp)||isNaN(n)) U.notice='Enter digits only.';
+      else if(n<20||n>5000) U.notice='Amount out of range.';
+      else { U.amt=n; U.node='topConfirm'; }
+      break;
+    }
+    case 'topConfirm':
+      if(inp==='1'){
+        acct.balance+=U.amt; U.ref=uref(); U.node='topDone';
+        addIncident('info','Fare top-up via USSD', acct.holder+' topped up card '+UID+' with '+money(U.amt)+' from '+USSD_MSISDN+'.',
+          ['channel: USSD '+USSD_CODE, 'ref '+U.ref], 'None — balance credited.');
+        toast('USSD top-up: '+money(U.amt)+' to '+UID);
+      } else if(inp==='2') back();
+      else U.notice='Invalid choice.';
+      break;
+    case 'lostConfirm':
+      if(inp==='1'){
+        U.ref=uref();
+        revoke(UID,'Reported lost by holder via USSD '+USSD_CODE+' (ref '+U.ref+')');
+        addIncident('warn','Card reported lost via USSD', acct.holder+' blocked card '+UID+' from '+USSD_MSISDN+'. '+
+          (S.online
+            ? 'Deny-list v'+S.backend.denyVer+' signed and pushed to all gates.'
+            : 'Network is down — the block is queued and applies at the next reconcile.'),
+          ['channel: USSD '+USSD_CODE, 'ref '+U.ref, 'deny-list v'+S.backend.denyVer],
+          S.online? 'Card refused at every gate from now. Issue replacement on ID.'
+                  : 'Reconcile once the link returns to push the block to the gates.');
+        toast('Card '+UID+' blocked via USSD');
+        U.node='lostDone';
+      } else if(inp==='2') back();
+      else U.notice='Invalid choice.';
+      break;
+  }
+  renderAll();
+}
+
+function uEnd(msg){
+  U.open=false; U.node='root'; U.input=''; U.notice=msg||'Session ended.';
+  stopUTimer(); renderAll();
+}
+function startUTimer(){
+  stopUTimer(); U.left=SESSION_S;
+  uTimer=setInterval(()=>{
+    U.left--;
+    if(U.left<=0){ uEnd('Session expired.'); return; }
+    renderPhone();
+  },1000);
+}
+function stopUTimer(){ if(uTimer){ clearInterval(uTimer); uTimer=null; } }
+
+function renderPhone(){
+  const bars=S.online?'▮▮▮▮':'▮▯▯▯';
+  const head='<div class="net"><span>SAFARI-NET '+bars+'</span><span>'+
+    (U.open?('USSD '+String(Math.floor(U.left/60))+':'+String(U.left%60).padStart(2,'0')):'Ready')+'</span></div>';
+  let body;
+  if(U.open) body=uBody();
+  else body='TapGuard Metro\n\nDial '+USSD_CODE+' and press\nSend.\n\nRegistered to\n'+USSD_MSISDN+'\ncard '+UID;
+  const notice=U.notice? '\n\n'+U.notice : '';
+  const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
+  el('lcd').innerHTML = head + esc(body+notice) +
+    '<div class="prompt">&gt; '+esc(U.input)+'<span class="cur"></span></div>';
+}
+
 /* ================= RENDER ================= */
-function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTiles(); renderPanel(); }
+function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTiles(); renderPanel(); renderPhone(); }
 
 function renderRibbon(){
   const buffered = S.edges.A.buffer.length + S.edges.B.buffer.length;
@@ -763,6 +983,18 @@ function clock(ts){ const d=new Date(ts); return d.toTimeString().slice(0,8); }
 /* ================= EVENTS ================= */
 let busy=false;
 document.addEventListener('click', async e=>{
+  const key=e.target.closest('[data-k]');
+  if(key){
+    const k=key.dataset.k;
+    if(k==='SEND') uSubmit();
+    else if(k==='END'){
+      if(U.input) { U.input=''; renderPhone(); }
+      else if(U.open) uEnd('Session cancelled.');
+      else { U.notice=''; renderPhone(); }
+    }
+    else { U.input+=k; U.notice=''; renderPhone(); }
+    return;
+  }
   const tapBtn=e.target.closest('[data-tap]');
   const cloneBtn=e.target.closest('[data-clone]');
   const tab=e.target.closest('.tab');
@@ -785,7 +1017,10 @@ el('netSwitch').addEventListener('click', ()=>{
   toast(S.online?'Gate link restored':'Gates offline — validating locally & buffering');
   renderAll();
 });
-el('resetBtn').addEventListener('click', async ()=>{ await boot(); toast('Demo reset to initial state'); });
+el('resetBtn').addEventListener('click', async ()=>{
+  stopUTimer(); U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:''};
+  await boot(); toast('Demo reset to initial state');
+});
 
 /* ---------- theme: explicit light/dark, remembered per viewer ---------- */
 const THEME_KEY='tapguard.theme';

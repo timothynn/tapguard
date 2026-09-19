@@ -89,6 +89,34 @@ outcome (clean accept → clone created → real-time block → outage → doubl
 real-time clone block was auto-revoking the card, which made the offline branch
 unreachable.
 
+## USSD: the rider channel
+
+Most fare-paying Kenyans reach a service on a feature phone, not an app. The console
+includes a working **USSD handset on the shortcode `*384#`**, running against the same
+state the gates use — not a mockup.
+
+```
+*384#
+  1. Check balance          balance, status, last trip
+  2. Top up fare            KSh 20 – 5,000, credited immediately
+  3. Report card lost       revokes the card at every gate
+  4. Why was I refused?     plain-language reason for the last refusal
+  5. Last 3 trips           station and fare per trip
+  0. Exit
+```
+
+The important one is **3**. A rider who loses a card dials the shortcode and blocks it
+themselves. That revocation bumps the deny-list version, re-signs it with the operator key
+and pushes it to every gate — so the card is refused on the next tap without anyone
+phoning a call centre.
+
+It also behaves correctly when the network is down. If the gates are offline, the block is
+**queued** rather than claimed as applied, and the handset says so. It reaches the gates at
+the next reconcile, on exactly the same path as a clone revocation.
+
+Sessions time out after 120 seconds like the real thing. The PIN step is deliberately
+omitted — this is a simulation and should not train anyone to type a PIN into a demo.
+
 ## Running the demo
 
 The console walks you through it with a checklist that advances automatically as you go:
