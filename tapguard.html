@@ -479,6 +479,7 @@ const STATIONS = {
   B:{id:'B', name:'Upper Hill', line:'CBD core · underground'}
 };
 const KES = n => 'KSh ' + n.toLocaleString('en-KE');
+const ROSTER = ['K001','K042','K077','K118','K156','K203','K315'];
 const now = () => Date.now();
 const el = id => document.getElementById(id);
 
@@ -501,9 +502,13 @@ function initState(){
   return {
     online:true,
     accounts:{ // shared account balances, keyed by card ID
-      K001:{holder:'Wanjiku M.', balance:800},
-      K042:{holder:'Otieno D.', balance:420},
-      K077:{holder:"Achieng' P.", balance:1500}
+      K001:{holder:'Wanjiku M.',  balance:800},
+      K042:{holder:'Otieno D.',   balance:520},
+      K077:{holder:"Achieng' P.", balance:1650},
+      K118:{holder:'Kamau J.',    balance:410},
+      K156:{holder:'Mwangi S.',   balance:790},
+      K203:{holder:'Njeri W.',    balance:280},
+      K315:{holder:'Mutua K.',    balance:145}
     },
     media:[ // physical media in play
       {mid:'m1', id:'K001', kind:'genuine', counter:0},
@@ -516,6 +521,7 @@ function initState(){
     incidents:[],
     denyDetail:{}, // id -> reason
     protected:0, leaked:0,
+    openIncident:false,   // a live case, not merely a non-empty deny-list
     tab:'inc',
     flags:{}
   };
@@ -523,20 +529,69 @@ function initState(){
 
 async function boot(){
   keyById = {};
-  for(const id of ['K001','K042','K077']) keyById[id] = await makeKey();
+  for(const id of ROSTER) keyById[id] = await makeKey();
   opsKey = await makeKey();
   S = initState();
-  await seedAmbient();
+  await seedHistory();
   await resignDeny();
   renderAll();
 }
 
-// seed a little honest example traffic so the console isn't empty at rest
-async function seedAmbient(){
-  const m42 = S.media.find(m=>m.id==='K042');
-  const m77 = S.media.find(m=>m.id==='K077');
-  await rawTap(m77,'A', now()-1000*60*4);
-  await rawTap(m42,'B', now()-1000*60*2);
+/* ---------- seeded history: today's traffic before the demo starts ----------
+   Real riders, real stations, one fraud case already caught and closed. Built by
+   running the same validate() path the live gates use, so every row, incident and
+   deny-list entry here was produced by the real rules, not written in by hand.
+   Nothing seeded touches K001 or any clone-kind media, so the seven-step
+   walkthrough still starts at 0 / 7. */
+const MIN=60*1000, HR=60*MIN;
+
+/* a tap from media that is not in the rider wallet (a duplicate, or a replay) */
+async function craftTap(id, edgeId, ts, counter){
+  const acct=S.accounts[id];
+  const mac=await hmacHex(keyById[id], id+'|'+counter+'|'+edgeId+'|'+ts);
+  return validate(edgeId, {id, holder:acct.holder, kind:'genuine', c:counter, edgeId, ts, mac});
+}
+
+async function seedHistory(){
+  const T=now();
+  const card=id=>({mid:'seed_'+id, id, kind:'genuine', counter:0});
+  const k042=card('K042'), k077=card('K077'), k118=card('K118'),
+        k156=card('K156'), k203=card('K203'), k315=card('K315');
+
+  /* morning peak */
+  await rawTap(k118,'A', T-6*HR+2*MIN);
+  await rawTap(k156,'A', T-6*HR+9*MIN);
+  await rawTap(k077,'A', T-6*HR+14*MIN);
+  await rawTap(k203,'B', T-6*HR+21*MIN);
+  await rawTap(k042,'A', T-6*HR+26*MIN);
+  await rawTap(k118,'B', T-6*HR+48*MIN);
+
+  /* the fraud case, caught and closed before the demo begins.
+     Mutua's card is skimmed; the duplicate is used at the other end of the core. */
+  await rawTap(k315,'A', T-4*HR);                        // genuine, accepted
+  await craftTap('K315','B', T-4*HR+95000, 2);           // 95s later, other station -> blocked
+  revoke('K315','Duplicate media confirmed at Upper Hill 95s after Railways — revoked by revenue protection');
+  await craftTap('K315','A', T-4*HR+30*MIN, 3);          // tried again -> refused by deny-list
+
+  /* midday */
+  await rawTap(k156,'B', T-3*HR+5*MIN);
+  await rawTap(k077,'B', T-3*HR+22*MIN);
+
+  /* an honest double-read: the same counter presented twice at one gate */
+  await rawTap(k203,'A', T-80*MIN);
+  await craftTap('K203','A', T-80*MIN+40000, 2);         // stale counter -> replay refused
+
+  /* last half hour */
+  await rawTap(k118,'A', T-24*MIN);
+  await rawTap(k156,'B', T-18*MIN);
+  await rawTap(k077,'A', T-11*MIN);
+  await rawTap(k042,'B', T-6*MIN);
+
+  /* three refusals stopped a fare each; none of it was clone-kind media, which is
+     what validate() counts, so record it here rather than leave the tile at zero */
+  S.protected = 3*FARE;
+  S.openIncident = false;   // the Mutua case is closed: card revoked, replacement issued
+  S.flags = {};             // the walkthrough still starts clean
 }
 
 /* ---------- deny-list signing ---------- */
@@ -572,14 +627,14 @@ async function validate(edgeId, tap){
     addIncident('good','Revoked card refused', tap.holder+' ('+tap.id+') was refused at '+STATIONS[edgeId].name+' — already revoked on deny-list v'+ (online?S.backend.denyVer:S.edges[edgeId].denyVer) +'.',
       ['card '+tap.id+' · deny-list hit · '+STATIONS[edgeId].name,
        'revoked because: '+(S.denyDetail[tap.id]||'revoked by operator')],
-      'None — this card is refused at every gate, online or offline.');
+      'None — this card is refused at every gate, online or offline.', tap.ts);
   }
   // 2. forged signature
   else if(tap.mac !== await hmacHex(keyById[tap.id], tap.id+'|'+tap.c+'|'+tap.edgeId+'|'+tap.ts)){
     res = mkRes('reject','FORGED','Cryptographic signature failed. This is not genuine media.', tap, 'BAD-SIG');
     S.protected += FARE;
     addIncident('crit','Forged media rejected','A tap for '+tap.id+' at '+STATIONS[edgeId].name+' failed HMAC verification.',
-      ['expected valid MAC · got mismatch'], 'None — refused at gate. Log device ID for follow-up.');
+      ['expected valid MAC · got mismatch'], 'None — refused at gate. Log device ID for follow-up.', tap.ts);
   }
   else {
     const a = store.acct[tap.id];
@@ -588,19 +643,20 @@ async function validate(edgeId, tap){
       res = mkRes('reject','REPLAY','Counter '+tap.c+' already used (last seen '+a.counter+'). Replayed media.', tap, 'REPLAY');
       if(isClone(tap)) S.protected += FARE;
       addIncident('crit','Replay blocked', tap.id+' presented a stale counter at '+STATIONS[edgeId].name+'.',
-        ['counter '+tap.c+' ≤ last '+a.counter], 'Refused at gate. Flag media '+tap.id+' for review.');
+        ['counter '+tap.c+' ≤ last '+a.counter], 'Refused at gate. Flag media '+tap.id+' for review.', tap.ts);
     }
     // 4. impossible travel (only visible where the store has seen the other station)
     else if(a && a.station !== tap.edgeId && (tap.ts - a.ts) < MIN_TRAVEL_S*1000){
       const gap = secsAgo(a.ts) - secsAgo(tap.ts);
       const dt = Math.max(1, Math.round((tap.ts - a.ts)/1000));
+      S.openIncident = true;
       res = mkRes('reject','CLONE','Also tapped at '+STATIONS[a.station].name+' '+dt+'s ago. Impossible travel — clone blocked.', tap, 'CLONE');
       S.protected += FARE;
       // networked gates block the ride live; permanent revocation is a reconcile decision
       addIncident('crit','Clone blocked in real time', tap.holder+"'s card ("+tap.id+') tapped at '+STATIONS[tap.edgeId].name+' just '+dt+'s after '+STATIONS[a.station].name+' — physically impossible.',
         ['tap 1 · '+tap.id+' @ '+STATIONS[a.station].name+' · counter '+a.counter,
          'tap 2 · '+tap.id+' @ '+STATIONS[tap.edgeId].name+' · counter '+tap.c+' (+'+dt+'s)'],
-        'Ride refused at gate. Flag '+tap.id+' for revocation on next reconcile.');
+        'Ride refused at gate. Flag '+tap.id+' for revocation on next reconcile.', tap.ts);
     }
     else {
       // ACCEPT
@@ -678,6 +734,7 @@ function reconcile(){
       if(p.edgeId!==q.edgeId && (q.ts-p.ts) < MIN_TRAVEL_S*1000){
         const dt = Math.max(1, Math.round((q.ts-p.ts)/1000));
         const acct = S.accounts[id];
+        S.openIncident = true;
         revoke(id, 'Reconcile: '+STATIONS[p.edgeId].name+' & '+STATIONS[q.edgeId].name+' '+dt+'s apart while offline');
         addIncident('crit','Clone confirmed on reconcile', acct.holder+"'s card ("+id+') was accepted at two gates '+dt+'s apart while the network was down. '+KES(FARE)+' leaked before it was caught.',
           ['offline tap · '+id+' @ '+STATIONS[p.edgeId].name+' · counter '+p.c,
@@ -712,8 +769,8 @@ function trackFlags(edgeId, tap, res){
 }
 
 /* ---------- incidents ---------- */
-function addIncident(sev, title, desc, ev, act){
-  S.incidents.unshift({sev, title, desc, ev, act, ts:now()});
+function addIncident(sev, title, desc, ev, act, ts){
+  S.incidents.unshift({sev, title, desc, ev, act, ts: ts||now()});
 }
 
 /* ================= USSD =================
@@ -882,7 +939,7 @@ function renderRibbon(){
   const revoked = S.backend.deny.size;
   let sysCls='ok', sysTxt='Operational';
   if(!S.online){ sysCls='warnc'; sysTxt='Degraded — local validation'; }
-  if(revoked){ sysCls='bad'; sysTxt='Active fraud incident'; }
+  if(S.openIncident){ sysCls='bad'; sysTxt='Active fraud incident'; }
   const rows=[
     ['seg-i '+sysCls, true, 'System', sysTxt],
     ['seg-i '+(S.online?'ok':'bad'), true, 'Gate link', S.online?'2 / 2 networked':'0 / 2 — buffering'],
