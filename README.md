@@ -36,10 +36,11 @@ Two self-contained HTML pages. No build step, no dependencies, no server.
 
 | File | What it does |
 |---|---|
-| [`tapguard.html`](tapguard.html) | The **operator console** — a live, interactive validator you drive yourself. Two station gates, a rider wallet, a USSD handset on `*384#`, a network switch, a reconciliation backend and a fraud-triage feed. |
+| [`tapguard.html`](tapguard.html) | The **operator console** — a live, interactive validator you drive yourself. Two station gates, a rider wallet, a bilingual USSD handset on `*384#` with SMS fallback, a network switch, a reconciliation backend, a fraud-triage feed and an operations intelligence layer. |
 | [`tapguard-simulation.html`](tapguard-simulation.html) | **Field simulation** — an 88-second narrated animation of the clone scenario from the operator's side, with synthesised sound and spoken narration. |
 | [`tapguard-ussd.html`](tapguard-ussd.html) | **Lost Card, No Smartphone** — a 90-second narrated animation of the same system from the rider's side: a card lost on a matatu, blocked over USSD from a feature phone, refused at the gate. Uses real DTMF keypad tones. |
 | [`verify/detection-logic.mjs`](verify/detection-logic.mjs) | An independent Node check that replays the whole scenario and asserts every outcome. |
+| [`verify/intel-engine.mjs`](verify/intel-engine.mjs) | 137 assertions against the analytics layer, extracted live from the page so it cannot drift. |
 | [`index.html`](index.html) | A landing page linking the three. |
 
 Open any of them directly in a browser. No build step, no dependencies, no server.
@@ -85,13 +86,29 @@ The detection rules are not just asserted in the UI — they are checked indepen
 
 ```bash
 node verify/detection-logic.mjs
+node verify/intel-engine.mjs
 ```
 
-This replays the full seven-step scenario against the same rule set and asserts each
+The first replays the full seven-step scenario against the same rule set and asserts each
 outcome (clean accept → clone created → real-time block → outage → double offline accept
 → reconcile revoke → refused everywhere). It caught a genuine bug during development: the
 real-time clone block was auto-revoking the card, which made the offline branch
 unreachable.
+
+The second runs 137 assertions against the analytics layer. It does not hold its own copy
+of that code — it **extracts the engine from `tapguard.html` at run time**, between marker
+comments, so it always tests what actually ships. Among the things it pins down:
+
+- no ordinary journey in the whole corpus reaches even the watch band (the false-positive
+  check that forced both scoring redesigns above)
+- a behavioural score can never produce a block or a revocation, at any band
+- a card with too little history is banded `insufficient`, never accused
+- every query answer matches a hand count over the same rows
+- an unparseable question says so instead of returning the whole table
+- Kiswahili covers every English string, and an offline block reply says *queued*, not
+  *pushed*
+- the engine exposes no accept/refuse entry point and touches neither crypto nor the
+  deny-list
 
 ## USSD: the rider channel
 
@@ -120,6 +137,109 @@ the next reconcile, on exactly the same path as a clone revocation.
 
 Sessions time out after 120 seconds like the real thing. The PIN step is deliberately
 omitted — this is a simulation and should not train anyone to type a PIN into a demo.
+
+### Kiswahili, and SMS for riders with no session
+
+The whole handset runs in **English or Kiswahili** — menus, confirmations, validation
+errors, refusal reasons. Option `9` switches language mid-session and lands you back on a
+menu you can read; the choice is remembered per viewer and survives a demo reset. The
+operator console stays in English: the rider channel is the part that has to meet people
+where they are.
+
+Below the handset is an **SMS fallback to 22384**, for riders with no USSD session or no
+credit. It takes free text in either language:
+
+```
+"nimepoteza kadi yangu"  → card blocked, deny-list re-signed and pushed, reply in Kiswahili
+"what is my balance"     → balance and card status
+"asdfgh"                 → "Sorry, we did not understand. Reply BALANCE, LOST or TRIPS."
+```
+
+Two deliberate choices here. First, **free text lives only on SMS, never on the keypad**: a
+rider at a gate needs a deterministic numbered menu, and a misread on SMS costs a
+clarifying reply rather than a fare or a wrongful block. Second, every SMS-triggered
+revocation records **the parsed intent, the detected language, the confidence and the
+original text** in the incident evidence, so an operator can always see that the system
+acted on an interpretation, and check it.
+
+Offline, SMS behaves exactly like the handset: the reply says the block is *queued*, and
+the gates genuinely do not have it until the next sync.
+
+> The Kiswahili strings were written for clarity over register and want a native
+> reviewer before any real deployment.
+
+## Operations intelligence
+
+A back-office layer over what the gates recorded: triage, behaviour, query and demand.
+
+**No model sits in the gate decision path.** Accept or refuse stays deterministic
+cryptography — offline, sub-second, explainable, and identical every time. Everything in
+this section reads the record *after* the fact. That boundary is asserted in the test
+suite, not just claimed here.
+
+| Tab | What it does |
+|---|---|
+| **Triage** | Clusters every signal about one card — rule hits and behaviour — into a single case with severity, confidence, exposure, a written summary and a recommended action. |
+| **Behaviour** | Scores each card against **its own** fourteen-day pattern: stations, hours, trips per day, time between taps. |
+| **Ask the record** | Plain-English questions over every tap on record, parsed to filters and executed literally. |
+| **Demand** | Expected taps per hour per gate for the next six hours, with crowding against stated gate capacity. |
+
+### What the behavioural layer is for
+
+The four cryptographic checks catch forged, replayed and duplicated media. They cannot
+catch a card that is **quietly shared or borrowed**, because every individual tap is
+genuine: real media, correct counter, physically possible timing. The gate is right to
+accept all of them.
+
+The console seeds exactly that case. `K156` (Mwangi S., normally two off-peak trips a day)
+is being passed around a household — eight trips today, every one accepted. The behavioural
+layer scores it 85/100 while the three ordinary commuters score **zero**, and the
+recommendation is still *"Watch — do not block yet"*:
+
+> Unusual travel is not proof of anything. Blocking a legitimate rider on behaviour alone
+> strands them at a gate with no way home. Wait for a cryptographic signal before acting.
+
+That restraint is enforced in code and in the tests: no behavioural score, at any band, can
+produce a block or a revocation.
+
+Two design decisions worth naming, both found by testing rather than by reasoning:
+
+- **Novelty is measured against what a card does most, not against its total.** A commuter
+  concentrates into two windows and two stations. Dividing by the total made even their
+  usual 08:00 tap look rare and put the entire roster on the watch list.
+- **Factors combine by noisy-OR, not a weighted sum.** A weighted sum caps any one factor
+  at its weight, so a card used four times its normal rate could never raise a case on
+  volume alone — and volume is the single best signal for a shared card. Travelling at an
+  odd hour has a ceiling *below* the alert threshold, so it can only ever corroborate.
+
+Every point of every score comes from a named factor with a sentence attached, because a
+score an operator cannot interrogate is one they will learn to ignore.
+
+### On the word "AI"
+
+Being precise, since it matters: **this layer is statistical and rule-based, not a language
+model.** The triage copilot composes prose from structured evidence; the query parser does
+intent and entity extraction; the forecaster is a historical mean weighted by weekday. All
+of it is deterministic, runs offline, and can be traced line by line.
+
+That is a deliberate fit to the problem, not a limitation worked around. A fare system
+needs answers that are identical every time, auditable after an appeal, and defensible to a
+regulator. The code marks exactly where a language model *would* earn its place — writing
+the case narrative — and why it must stop there:
+
+> `buildCases()` composes prose from structured evidence. To use a language model instead,
+> send that evidence object to it and replace `case.summary` and `case.rationale` with the
+> response. Keep `case.severity`, `case.action` and the gate decision itself rule-derived:
+> a model that hallucinates a revocation strands a rider.
+
+### Where the data comes from
+
+The console carries fourteen days of history behind today: seven named riders with coherent
+personas, plus anonymous station throughput so the demand curve is a real station's rather
+than seven people's. All of it is generated from a seeded PRNG, so it is identical on every
+load and in the test suite. Today's traffic is produced by running the **same `validate()`
+path the live gates use** — every seeded row, incident and deny-list entry was produced by
+the real rules, not written in by hand.
 
 ## Running the demo
 
@@ -159,6 +279,18 @@ This is a **reference implementation and demonstration**, not production softwar
   refund and reissue, but the policy question — how long a rider is stranded — is a real
   operational cost this prototype only gestures at.
 - No accessibility audit, no load testing, no formal threat model.
+- The behavioural baselines are built from generated history, not real ridership. The
+  scoring logic is real and tested; the distributions it learns from are synthetic, and a
+  real deployment would find different thresholds.
+- The demand forecaster is a historical mean by hour weighted toward the same weekday. It
+  cannot see a match at Kasarani, rain, or a closed road, and it is a baseline rather than
+  a serious forecasting model.
+- The natural-language query understands a fixed vocabulary of cards, stations, outcomes
+  and time expressions. It says so when it cannot read a question, but it is not
+  open-domain.
+- The Kiswahili strings have not been reviewed by a native speaker.
+- SMS intent parsing is keyword-based. It is deliberately confined to a channel where being
+  wrong is cheap, but "deliberately confined" is not the same as accurate.
 
 ## Context and sources
 

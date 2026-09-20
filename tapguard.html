@@ -296,6 +296,100 @@ a{color:var(--accent)}
 .panel{max-height:520px;overflow-y:auto;padding:12px}
 .empty{color:var(--faint);font-size:12.5px;text-align:center;padding:26px 12px}
 
+/* ---- operations intelligence ---- */
+.intel{margin-top:16px}
+.intel .tabs{border-radius:0}
+.ipanel{padding:14px 15px}
+.ibar{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.ibar .lede{font-size:12.5px;color:var(--muted);line-height:1.5}
+.ibar .lede b{color:var(--text);font-weight:600}
+.icols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:900px){.icols{grid-template-columns:1fr}}
+
+/* triage cases */
+.case{border:1px solid var(--line);border-left-width:3px;border-radius:12px;background:var(--surface2);padding:12px 13px}
+.case.critical{border-left-color:var(--crit)} .case.high{border-left-color:var(--warn)}
+.case.medium{border-left-color:var(--accent)} .case.info{border-left-color:var(--line2)}
+.case .ch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:7px}
+.case .cid{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text)}
+.case .csum{font-size:12.5px;line-height:1.55;color:var(--text)}
+.case .cact{margin-top:9px;padding-top:9px;border-top:1px solid var(--line);font-size:12.5px}
+.case .cact .lbl{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);
+  display:block;margin-bottom:3px}
+.case .cact .why{color:var(--muted);font-size:12px;line-height:1.5;margin-top:4px}
+.pill{display:inline-block;padding:2px 8px;border-radius:999px;font-family:var(--mono);font-size:10px;
+  letter-spacing:.06em;text-transform:uppercase;border:1px solid var(--line2);color:var(--muted);white-space:nowrap}
+.pill.critical{background:var(--crit-bg);border-color:var(--crit-line);color:var(--crit)}
+.pill.high{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn)}
+.pill.medium{background:var(--surface);border-color:var(--line2);color:var(--accent)}
+.pill.open{background:var(--warn-bg);border-color:var(--warn-line);color:var(--warn)}
+.pill.closed{background:var(--good-bg);border-color:var(--good-line);color:var(--good)}
+
+/* behaviour */
+.risk{border:1px solid var(--line);border-radius:12px;background:var(--surface2);padding:11px 12px;margin-bottom:10px}
+.risk .rh{display:flex;align-items:center;gap:9px}
+.risk .rid{font-family:var(--mono);font-size:12px;font-weight:600}
+.risk .rname{font-size:12.5px;color:var(--muted)}
+.risk .rscore{margin-left:auto;font-family:var(--disp);font-weight:800;font-size:19px;font-variant-numeric:tabular-nums}
+.risk.normal .rscore{color:var(--muted)} .risk.watch .rscore{color:var(--accent)}
+.risk.elevated .rscore{color:var(--warn)} .risk.high .rscore{color:var(--crit)}
+.risk.insufficient .rscore{color:var(--faint);font-size:12px;font-family:var(--mono);font-weight:500}
+.meter{height:5px;border-radius:3px;background:var(--line);margin:8px 0;overflow:hidden}
+.meter i{display:block;height:100%;border-radius:3px;background:var(--muted)}
+.risk.watch .meter i{background:var(--accent)} .risk.elevated .meter i{background:var(--warn)}
+.risk.high .meter i{background:var(--crit)}
+.risk ul{list-style:none;margin:0;padding:0}
+.risk li{font-size:12px;color:var(--muted);line-height:1.55;padding-left:13px;position:relative}
+.risk li::before{content:'';position:absolute;left:0;top:7px;width:5px;height:5px;border-radius:50%;background:var(--line2)}
+.risk .quiet{font-size:12px;color:var(--faint)}
+
+/* ask the ledger */
+.askrow{display:flex;gap:8px}
+.askrow input{flex:1;min-width:0;background:var(--surface2);border:1px solid var(--line2);border-radius:10px;
+  padding:9px 12px;color:var(--text);font-family:var(--sans);font-size:13px}
+.askrow input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+.chip{border:1px solid var(--line2);background:var(--surface2);color:var(--muted);border-radius:999px;
+  padding:4px 10px;font-size:11.5px;cursor:pointer}
+.chip:hover{border-color:var(--accent);color:var(--text)}
+.askans{margin-top:13px;font-size:13px;color:var(--text);font-weight:600}
+.askread{font-size:11.5px;color:var(--faint);font-family:var(--mono);margin-top:4px;line-height:1.6}
+.dtable{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}
+.dtable th{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--faint);font-weight:600;padding:5px 8px;border-bottom:1px solid var(--line)}
+.dtable td{padding:6px 8px;border-bottom:1px solid var(--line);color:var(--text);vertical-align:top}
+.dtable tr:last-child td{border-bottom:none}
+.dtable td:first-child{font-family:var(--mono);font-size:11.5px}
+
+/* demand */
+.fc{border:1px solid var(--line);border-radius:12px;background:var(--surface2);padding:12px 13px}
+.fc h3{font-size:12.5px;font-weight:700;margin-bottom:2px}
+.fc .sub{font-size:11.5px;color:var(--faint);margin-bottom:11px}
+.bars{display:grid;grid-template-columns:repeat(6,1fr);gap:7px;align-items:end;height:104px}
+.bars .bcol{display:flex;flex-direction:column;justify-content:flex-end;height:100%;gap:5px}
+.bars .bar{border-radius:5px 5px 0 0;min-height:3px;background:var(--line2);transition:height .3s}
+.bcol.light .bar{background:var(--line2)} .bcol.steady .bar{background:var(--accent)}
+.bcol.busy .bar{background:var(--warn)} .bcol.crush .bar{background:var(--crit)}
+.bars .bh{font-family:var(--mono);font-size:10px;color:var(--faint);text-align:center}
+.bars .bv{font-family:var(--mono);font-size:10px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums}
+.fckey{display:flex;gap:12px;flex-wrap:wrap;margin-top:11px;font-size:11px;color:var(--faint)}
+.fckey i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.fckey .l{background:var(--line2)} .fckey .s{background:var(--accent)}
+.fckey .b{background:var(--warn)} .fckey .c{background:var(--crit)}
+.fcnote{font-size:11.5px;color:var(--faint);line-height:1.55;margin-top:12px}
+
+/* language + SMS on the rider channel */
+.usbar{display:flex;align-items:center;gap:8px;padding:0 0 11px;flex-wrap:wrap}
+.usbar .lk{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint)}
+.sms{margin-top:13px;border-top:1px solid var(--line);padding-top:12px}
+.sms h3{font-size:12px;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:3px}
+.sms .lede{font-size:11.5px;color:var(--faint);line-height:1.55;margin-bottom:9px}
+.thread{display:flex;flex-direction:column;gap:7px;margin-bottom:10px;max-height:190px;overflow-y:auto}
+.msg{max-width:88%;padding:7px 10px;border-radius:12px;font-size:12px;line-height:1.5}
+.msg.out{align-self:flex-end;background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px}
+.msg.in{align-self:flex-start;background:var(--surface2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg .meta{display:block;font-family:var(--mono);font-size:9.5px;opacity:.72;margin-top:4px}
+
 /* incidents */
 .inc{border:1px solid var(--line);border-left-width:3px;border-radius:11px;padding:11px 12px;margin-bottom:10px;background:var(--surface2)}
 .inc.sev-crit{border-left-color:var(--crit)} .inc.sev-warn{border-left-color:var(--warn)}
@@ -431,6 +525,13 @@ a{color:var(--accent)}
         </div>
         <div class="panel" id="panel"></div>
         <div class="panel ussd-wrap" id="panelUssd" hidden>
+          <div class="usbar">
+            <span class="lk">Language</span>
+            <div class="seg" id="langSeg" role="group" aria-label="Handset language">
+              <button class="seg-b" data-lang="en" aria-pressed="true">English</button>
+              <button class="seg-b" data-lang="sw" aria-pressed="false">Kiswahili</button>
+            </div>
+          </div>
           <div class="handset">
             <div class="lcd" id="lcd" role="status" aria-live="polite"></div>
             <div class="keys">
@@ -452,10 +553,53 @@ a{color:var(--accent)}
               <button class="endc" data-k="END">Clear / End</button>
             </div>
           </div>
-          <div class="hint">Dial <b>*384#</b> and press Send. Option <b>3</b> blocks the registered card at every gate.</div>
+          <div class="hint" id="ussdHint">Dial <b>*384#</b> and press Send. Option <b>3</b> blocks the registered card at every gate.</div>
+
+          <div class="sms">
+            <h3>SMS fallback</h3>
+            <p class="lede">For riders with no USSD session or no credit. Free text in English or
+            Kiswahili, routed to the same revocation path as the menu. A misread here costs a
+            clarifying reply, not a fare &mdash; which is why free text lives on this channel and
+            not on the keypad.</p>
+            <div class="thread" id="smsThread" role="log" aria-live="polite"></div>
+            <form class="askrow" id="smsForm">
+              <input id="smsIn" type="text" autocomplete="off" placeholder="e.g. nimepoteza kadi yangu"
+                     aria-label="SMS message to 22384">
+              <button class="btn" type="submit">Send</button>
+            </form>
+          </div>
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- INTELLIGENCE: analysis over what the gates recorded. Never in the decision path. -->
+  <div class="card intel">
+    <div class="hd">
+      <h2>Operations intelligence</h2>
+      <span class="count">back office &mdash; no model in the gate decision path</span>
+    </div>
+    <div class="tabs itabs" role="tablist">
+      <button class="tab" role="tab" data-itab="cases" aria-selected="true">Triage<span class="b" id="caseB">0</span></button>
+      <button class="tab" role="tab" data-itab="risk" aria-selected="false">Behaviour<span class="b" id="riskB">0</span></button>
+      <button class="tab" role="tab" data-itab="ask" aria-selected="false">Ask the record</button>
+      <button class="tab" role="tab" data-itab="demand" aria-selected="false">Demand</button>
+    </div>
+    <div class="ipanel" id="ipCases"></div>
+    <div class="ipanel" id="ipRisk" hidden></div>
+    <div class="ipanel" id="ipAsk" hidden>
+      <div class="ibar"><p class="lede">Plain-English questions over every tap on record &mdash;
+        <b id="askCorpusN">0</b> taps across fourteen days plus this session. Parsed to filters and
+        executed literally, so the row count is checkable by eye.</p></div>
+      <form class="askrow" id="askForm">
+        <input id="askIn" type="text" autocomplete="off" aria-label="Question about the tap record"
+               placeholder="how many taps at Upper Hill this evening?">
+        <button class="btn" type="submit">Ask</button>
+      </form>
+      <div class="chips" id="askChips"></div>
+      <div id="askOut"></div>
+    </div>
+    <div class="ipanel" id="ipDemand" hidden></div>
   </div>
 
 
@@ -523,6 +667,8 @@ function initState(){
     protected:0, leaked:0,
     openIncident:false,   // a live case, not merely a non-empty deny-list
     tab:'inc',
+    itab:'cases',
+    sms:[],
     flags:{}
   };
 }
@@ -532,8 +678,11 @@ async function boot(){
   for(const id of ROSTER) keyById[id] = await makeKey();
   opsKey = await makeKey();
   S = initState();
+  initIntel();                       // fourteen days of history behind today
+  try{ U.lang = localStorage.getItem('tapguard.lang')==='sw' ? 'sw' : U.lang; }catch(e){}
   await seedHistory();
   await resignDeny();
+  renderAskChips();
   renderAll();
 }
 
@@ -558,13 +707,20 @@ async function seedHistory(){
   const k042=card('K042'), k077=card('K077'), k118=card('K118'),
         k156=card('K156'), k203=card('K203'), k315=card('K315');
 
+  /* Order matters: taps must be seeded in strictly increasing time. The
+     impossible-travel rule compares a tap against the card's last-seen record,
+     so a tap dated earlier than the previous one yields a negative interval and
+     is refused as a clone. Keep every line below in chronological order. */
+
   /* morning peak */
-  await rawTap(k118,'A', T-6*HR+2*MIN);
-  await rawTap(k156,'A', T-6*HR+9*MIN);
-  await rawTap(k077,'A', T-6*HR+14*MIN);
-  await rawTap(k203,'B', T-6*HR+21*MIN);
-  await rawTap(k042,'A', T-6*HR+26*MIN);
-  await rawTap(k118,'B', T-6*HR+48*MIN);
+  await rawTap(k118,'A', T-6*HR+2*MIN);       // -358
+  await rawTap(k156,'A', T-6*HR+9*MIN);       // -351
+  await rawTap(k077,'A', T-6*HR+14*MIN);      // -346
+  await rawTap(k203,'B', T-6*HR+21*MIN);      // -339
+  await rawTap(k042,'A', T-6*HR+26*MIN);      // -334
+  await rawTap(k156,'A', T-5*HR-20*MIN);      // -320
+  await rawTap(k118,'B', T-6*HR+48*MIN);      // -312
+  await rawTap(k156,'B', T-4*HR-40*MIN);      // -280
 
   /* the fraud case, caught and closed before the demo begins.
      Mutua's card is skimmed; the duplicate is used at the other end of the core. */
@@ -574,12 +730,24 @@ async function seedHistory(){
   await craftTap('K315','A', T-4*HR+30*MIN, 3);          // tried again -> refused by deny-list
 
   /* midday */
-  await rawTap(k156,'B', T-3*HR+5*MIN);
-  await rawTap(k077,'B', T-3*HR+22*MIN);
+  await rawTap(k156,'B', T-3*HR+5*MIN);       // -175
+  await rawTap(k077,'B', T-3*HR+22*MIN);      // -158
+
+  /* The case the four rules cannot catch — and should not.
+     Mwangi's card (K156, normally two off-peak trips a day) is being passed
+     around a household. Every K156 tap today is genuine media with a correct
+     counter, far enough apart in time to be physically possible, so the gate is
+     right to accept all of them. Only the behavioural layer can see that eight
+     trips is not how this card has behaved for fourteen days — and even then the
+     recommendation is to watch, never to block. */
+  await rawTap(k156,'A', T-2*HR-15*MIN);      // -135
+  await rawTap(k156,'B', T-95*MIN);           // -95
 
   /* an honest double-read: the same counter presented twice at one gate */
   await rawTap(k203,'A', T-80*MIN);
   await craftTap('K203','A', T-80*MIN+40000, 2);         // stale counter -> replay refused
+
+  await rawTap(k156,'A', T-52*MIN);           // -52
 
   /* last half hour */
   await rawTap(k118,'A', T-24*MIN);
@@ -773,14 +941,601 @@ function addIncident(sev, title, desc, ev, act, ts){
   S.incidents.unshift({sev, title, desc, ev, act, ts: ts||now()});
 }
 
+/* ==== INTEL ENGINE START ====
+   Analytics layer. Pure functions only - no DOM, no page globals - so the same
+   code can be unit-tested outside the browser. Nothing in here sits in the gate
+   decision path: accept/refuse stays deterministic cryptography, offline and
+   sub-second. This layer is back office only. */
+
+const INTEL = (() => {
+  const HOUR = 3600000, DAY = 86400000;
+  const clampN = (v, a, b) => Math.min(b, Math.max(a, v));
+  const pct = (a, b) => b ? Math.round(100 * a / b) : 0;
+
+  /* deterministic PRNG, so the corpus is identical on every load and in tests */
+  function rng(seed){
+    let a = seed >>> 0;
+    return function(){
+      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      let t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  /* ---------- 1. historical corpus ----------
+     Fourteen days of ridership behind today. Synthetic, but behaviourally
+     coherent: each card has a persona with home and work stations and travel
+     hours. That coherence is what makes anomaly detection meaningful rather
+     than decorative - without it every tap looks equally strange. */
+  /* Each trip is an offset in hours from the day's anchor, and the anchor is the
+     same time of day as the moment the console was opened. That keeps the
+     fourteen-day history and the seeded traffic for today on the same clock: if
+     it did not, every tap seeded "six hours ago" would land at an hour these
+     riders never travel, and the model would flag the entire roster as nocturnal.
+     A NEGATIVE offset is a leg that happens later in the day than now - it is
+     still in the past on a previous day, and it is what gives the forecast
+     something ahead of the current hour to predict. */
+  const PERSONAS = {
+    K001:{label:'weekday commuter',   days:[1,2,3,4,5],     jitter:35,
+          trips:[{h:6.0,s:'A'},{h:0.6,s:'B'},{h:-2.2,s:'A'}]},
+    K042:{label:'weekday commuter',   days:[1,2,3,4,5,6],   jitter:40,
+          trips:[{h:5.6,s:'A'},{h:0.15,s:'B'},{h:-3.0,s:'A'}]},
+    K077:{label:'frequent irregular', days:[0,1,2,3,4,5,6], jitter:55,
+          trips:[{h:5.8,s:'A'},{h:2.6,s:'B'},{h:0.2,s:'A'},{h:-1.5,s:'B'}]},
+    K118:{label:'weekday commuter',   days:[1,2,3,4,5],     jitter:30,
+          trips:[{h:6.0,s:'A'},{h:5.2,s:'B'},{h:0.4,s:'A'},{h:-2.8,s:'B'}]},
+    K156:{label:'off-peak rider',     days:[1,2,3,4,5],     jitter:50,
+          trips:[{h:6.0,s:'A'},{h:2.9,s:'B'},{h:-1.8,s:'A'}]},
+    K203:{label:'evening rider',      days:[2,3,4,5,6],     jitter:45,
+          trips:[{h:5.7,s:'B'},{h:1.3,s:'A'},{h:-2.0,s:'B'}]},
+    K315:{label:'weekday commuter',   days:[1,2,3,4,5],     jitter:35,
+          trips:[{h:4.0,s:'A'},{h:0.5,s:'B'},{h:-2.5,s:'A'}]}
+  };
+
+  function genCorpus(nowTs, days, seed){
+    days = days || 14; seed = seed || 20260920;
+    const r = rng(seed), out = [];
+    for(let back = days; back >= 1; back--){
+      const anchor = nowTs - back * DAY;     // same time of day, N days ago
+      const dow = new Date(anchor).getDay();
+      for(const id in PERSONAS){
+        const p = PERSONAS[id];
+        if(p.days.indexOf(dow) === -1) continue;
+        if(r() < 0.10) continue;             // the odd day off
+        for(const trip of p.trips){
+          const ts = anchor - trip.h * HOUR + (r() - 0.5) * p.jitter * 60000;
+          if(ts >= nowTs) continue;          // never generate the future
+          out.push({ id:id, edgeId:trip.s, ts:Math.round(ts), code:'OK', src:'history' });
+        }
+      }
+    }
+    return out.sort((a,b) => a.ts - b.ts);
+  }
+
+  /* ---------- 2. behavioural profiles ----------
+     What normal looks like for one card: where it travels, when, how often. */
+  function buildProfiles(taps){
+    const P = {};
+    for(const t of taps){
+      const p = P[t.id] || (P[t.id] = {
+        id:t.id, n:0, station:{}, hourWin:new Array(24).fill(0),
+        dow:new Array(7).fill(0), byDay:{}, gaps:[], pairs:{}, last:null,
+        firstTs:t.ts, lastTs:t.ts
+      });
+      p.n++; p.lastTs = t.ts;
+      p.station[t.edgeId] = (p.station[t.edgeId] || 0) + 1;
+      const d = new Date(t.ts), h = d.getHours();
+      /* a three-hour window, so 07:59 and 08:01 are not treated as different worlds */
+      p.hourWin[(h + 23) % 24]++; p.hourWin[h]++; p.hourWin[(h + 1) % 24]++;
+      p.dow[d.getDay()]++;
+      const key = dayKey(t.ts);
+      p.byDay[key] = (p.byDay[key] || 0) + 1;
+      if(p.last){
+        const gap = (t.ts - p.last.ts) / 60000;
+        if(gap > 0 && gap < 18 * 60) p.gaps.push(gap);
+        const pk = p.last.edgeId + '>' + t.edgeId;
+        p.pairs[pk] = (p.pairs[pk] || 0) + 1;
+      }
+      p.last = t;
+    }
+    for(const id in P){
+      const p = P[id];
+      const counts = Object.keys(p.byDay).map(k => p.byDay[k]);
+      p.daysSeen = counts.length;
+      p.perDayMean = counts.reduce((a,b) => a + b, 0) / Math.max(1, counts.length);
+      const v = counts.reduce((a,b) => a + Math.pow(b - p.perDayMean, 2), 0) / Math.max(1, counts.length);
+      p.perDaySd = Math.sqrt(v);
+      const g = p.gaps.slice().sort((a,b) => a - b);
+      p.gapMedian = g.length ? g[Math.floor(g.length / 2)] : null;
+      p.topStation = Object.keys(p.station).sort((a,b) => p.station[b] - p.station[a])[0];
+      p.topPair = Object.keys(p.pairs).sort((a,b) => p.pairs[b] - p.pairs[a])[0] || null;
+      p.peakHour = p.hourWin.indexOf(Math.max.apply(null, p.hourWin));
+    }
+    return P;
+  }
+  function dayKey(ts){
+    const d = new Date(ts);
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+  }
+
+  /* ---------- 3. anomaly scoring ----------
+     Explainable by construction: every point of score comes from a named factor
+     with a sentence attached. An operator who cannot see why will not trust it,
+     and a score nobody trusts is worse than no score. */
+  function scoreTap(profile, tap, ctx){
+    ctx = ctx || {};
+    const factors = [];
+    if(!profile || profile.n < 4){
+      return { score:0, band:'insufficient', factors:[{ k:'history', w:0,
+        why:'Not enough history on this card to model normal behaviour.' }] };
+    }
+    const d = new Date(tap.ts), h = d.getHours();
+
+    /* Novelty is measured against what this card does MOST, not against its
+       total. A commuter concentrates into two windows and two stations, so
+       dividing by the total would make even their usual 08:00 tap look rare and
+       put every ordinary rider on the watch list. Relative to the card's own
+       peak, a routine trip scores zero and only genuine departures register. */
+    const seen = profile.station[tap.edgeId] || 0;
+    const maxStation = Math.max.apply(null, Object.keys(profile.station).map(k => profile.station[k]));
+    const sN = 1 - (seen + 0.5) / (maxStation + 0.5);
+    if(sN > 0.5) factors.push({ k:'station', w:sN,
+      why:(ctx.stationName || tap.edgeId) + ' is ' + pct(seen, profile.n) + '% of this card’s history.' });
+
+    const maxHour = Math.max.apply(null, profile.hourWin);
+    const hN = 1 - (profile.hourWin[h] + 0.5) / (maxHour + 0.5);
+    if(hN > 0.5) factors.push({ k:'hour', w:hN,
+      why:'This card has rarely travelled around ' + String(h).padStart(2,'0') + ':00.' });
+
+    const todayN = (ctx.todayCount != null) ? ctx.todayCount : (profile.byDay[dayKey(tap.ts)] || 0);
+    const z = (todayN - profile.perDayMean) / Math.max(0.6, profile.perDaySd);
+    const pA = clampN(z / 3, 0, 1);
+    if(pA > 0.4) factors.push({ k:'pace', w:pA,
+      why:todayN + ' taps today against a usual ' + profile.perDayMean.toFixed(1) + '.' });
+
+    if(ctx.gapMin != null && profile.gapMedian){
+      const tight = clampN(1 - (ctx.gapMin / (profile.gapMedian * 0.25)), 0, 1);
+      if(tight > 0.4) factors.push({ k:'cadence', w:tight,
+        why:Math.round(ctx.gapMin) + ' min since the previous tap; this card usually leaves ' +
+            Math.round(profile.gapMedian) + ' min.' });
+    }
+
+    /* Combination is noisy-OR, not a weighted sum. A weighted sum caps any one
+       factor at its weight, so a card used four times its normal rate could
+       never raise a case on volume alone - and volume is the single best signal
+       for a shared card, which is the fraud this layer exists to catch. Each
+       factor instead has a standalone ceiling: how much that evidence alone
+       justifies. Independent factors then compound, as corroboration should. */
+    /* Travelling at an odd hour, on its own, means nothing - people work late.
+       Its ceiling is deliberately below the watch threshold so it can only ever
+       corroborate another factor, never raise an alert by itself. */
+    const CEIL = { pace:0.70, cadence:0.60, station:0.55, hour:0.30 };
+    let residual = 1;
+    for(const f of factors) residual *= (1 - f.w * (CEIL[f.k] || 0.4));
+    let score = Math.round(100 * (1 - residual));
+
+    /* a physical impossibility is not a matter of degree */
+    if(ctx.impossible){
+      score = Math.max(score, 92);
+      factors.unshift({ k:'velocity', w:1,
+        why:'Same card at two stations ' + ctx.impossibleGapS + 's apart — not physically possible.' });
+    }
+    score = clampN(score, 0, 100);
+    return { score:score, band:band(score), factors:factors.sort((a,b) => b.w - a.w) };
+  }
+  function band(s){ return s >= 80 ? 'high' : s >= 60 ? 'elevated' : s >= 30 ? 'watch' : 'normal'; }
+
+  /* Score every card that has been active in `recent`, newest tap per card. */
+  function scanCards(profiles, recent, ctxFor){
+    const out = [];
+    const byCard = {};
+    for(const t of recent) (byCard[t.id] || (byCard[t.id] = [])).push(t);
+    for(const id in byCard){
+      const mine = byCard[id];
+      const latest = mine[mine.length - 1];
+      const res = scoreTap(profiles[id], latest, ctxFor ? ctxFor(id, latest, mine) : {});
+      out.push({ id:id, score:res.score, band:res.band, factors:res.factors,
+                 taps:mine.length, latest:latest });
+    }
+    return out.sort((a,b) => b.score - a.score || (a.id < b.id ? -1 : 1));
+  }
+
+  /* ---------- 4. fraud-triage copilot ----------
+     Clusters every signal about one card into a single case and writes it up:
+     what happened, what it is worth, what to do, and how sure we are.
+     Composition is rule-based over structured evidence. LLM_SLOT documents
+     exactly where a language model would take over - and where it must not. */
+  const LLM_SLOT =
+    'buildCases() composes prose from structured evidence (case.evidence). To use a ' +
+    'language model instead, send that evidence object to it and replace case.summary ' +
+    'and case.rationale with the response. Keep case.severity, case.action and the gate ' +
+    'decision itself rule-derived: a model that hallucinates a revocation strands a rider.';
+
+  function buildCases(opts){
+    const incidents  = opts.incidents  || [];
+    const anomalies  = opts.anomalies  || [];
+    const deny       = opts.deny       || new Set();
+    const denyDetail = opts.denyDetail || {};
+    const accounts   = opts.accounts   || {};
+    const fare       = opts.fare       || 50;
+
+    const byCard = {};
+    const touch = id => byCard[id] || (byCard[id] = {
+      id:id, holder:(accounts[id] || {}).holder || id,
+      incidents:[], anomaly:null, revoked:deny.has ? deny.has(id) : false });
+
+    for(const i of incidents){
+      const hay = (i.desc || '') + ' ' + (i.title || '') + ' ' + (i.ev || '');
+      const m = hay.match(/K\d{3}/);
+      if(!m) continue;
+      touch(m[0]).incidents.push(i);
+    }
+    for(const a of anomalies) if(a.score >= 60) touch(a.id).anomaly = a;
+
+    const cases = Object.keys(byCard).map(k => {
+      const c = byCard[k];
+      const titles = c.incidents.map(i => i.title || '').join(' | ');
+      const hasClone   = /clone|duplicate/i.test(titles);
+      const hasReplay  = /replay/i.test(titles);
+      const hasRefusal = /revoked|refused/i.test(titles);
+      const signals = (hasClone ? 1 : 0) + (hasReplay ? 1 : 0) + (c.anomaly ? 1 : 0);
+
+      let severity = 'info';
+      if(hasClone) severity = 'critical';
+      else if(hasReplay || (c.anomaly && c.anomaly.band === 'high')) severity = 'high';
+      else if(c.anomaly && c.anomaly.band === 'elevated') severity = 'medium';
+
+      const state = c.revoked ? 'closed' : (severity === 'info' ? 'monitoring' : 'open');
+      const confidence = signals >= 2 ? 'high' : signals === 1 ? (hasClone ? 'high' : 'medium') : 'low';
+
+      /* composed from what the evidence actually contains, not a fixed sentence */
+      const bits = [];
+      if(hasClone)   bits.push('a duplicate of this card was presented at a second station inside the minimum plausible transfer time');
+      if(hasReplay)  bits.push('a stale counter was presented, which is either a faulty reader or a replayed token');
+      if(hasRefusal && !hasClone) bits.push('the card has been refused at a gate');
+      if(c.anomaly)  bits.push('behaviour scores ' + c.anomaly.score + '/100 (' + c.anomaly.band + ')' +
+                       (c.anomaly.factors[0] ? ' — ' + c.anomaly.factors[0].why.replace(/\.$/,'') : ''));
+      const summary = bits.length
+        ? c.holder + ' (' + c.id + '): ' + bits.join('; ') + '.'
+        : c.holder + ' (' + c.id + '): no active signals.';
+
+      let action, rationale;
+      if(hasClone && !c.revoked){
+        action = 'Revoke and reissue';
+        rationale = 'A duplicate in active use costs a fare every journey and will not stop on its own. ' +
+                    'Revoking also freezes the legitimate holder, so pair it with a same-day replacement.';
+      } else if(c.revoked){
+        action = 'Closed — card revoked';
+        rationale = denyDetail[c.id] || 'Card is on the signed deny-list; the list carries the reason.';
+      } else if(hasReplay){
+        action = 'Inspect the gate, then the card';
+        rationale = 'A single replay is more often a faulty reader than fraud. Check the gate before accusing the rider.';
+      } else if(c.anomaly && c.anomaly.band === 'high'){
+        action = 'Watch — do not block yet';
+        rationale = 'Unusual travel is not proof of anything. Blocking a legitimate rider on behaviour alone strands them ' +
+                    'at a gate with no way home. Wait for a cryptographic signal before acting.';
+      } else if(c.anomaly){
+        action = 'Watch';
+        rationale = 'Worth a second data point before an operator spends time on it. Behaviour alone never justifies ' +
+                    'a block — the cost of stranding a legitimate rider outweighs one disputed fare.';
+      } else {
+        action = 'No action';
+        rationale = 'Below the threshold that justifies operator time.';
+      }
+
+      return { id:c.id, holder:c.holder, severity:severity, state:state, confidence:confidence,
+        summary:summary, action:action, rationale:rationale,
+        exposure:(hasClone ? fare : 0), signals:signals,
+        evidence:{ incidents:c.incidents.map(i => i.title), anomaly:c.anomaly || null,
+                   revoked:c.revoked, reason:denyDetail[c.id] || null } };
+    });
+
+    const rank = { critical:0, high:1, medium:2, info:3 };
+    return cases.sort((a,b) => rank[a.severity] - rank[b.severity] || b.signals - a.signals ||
+                               (a.id < b.id ? -1 : 1));
+  }
+
+  /* ---------- 5. demand and crowding ----------
+     Historical mean by hour of day, weighted toward the same weekday. This is a
+     baseline forecaster, not a learned model, and the UI says so. It is still
+     the thing that tells a station manager where to put staff at 17:00. */
+  const GATE_CAPACITY_PER_HOUR = 90;
+
+  /* The console names seven riders so the fraud story stays followable, but a
+     station's demand curve is made of thousands of anonymous taps. Those are
+     generated as hourly totals rather than individual records - the forecast
+     only ever reads bucket counts, and holding 20,000 tap objects to reach the
+     same six numbers would be waste. The named roster rides on top of this.
+     Anonymous volume never reaches buildProfiles: there is no card to profile. */
+  const BASE_WEEKDAY = [2,1,1,1,6,22,58,96,88,52,34,32,40,42,34,38,56,92,97,70,44,28,14,6];
+  const BASE_WEEKEND = [4,2,1,1,3,8,18,26,34,42,48,52,54,52,48,46,44,42,38,34,30,22,14,8];
+  const STATION_SCALE = { A:1.0, B:0.8 };
+  function genVolume(nowTs, days, seed){
+    days = days || 14;
+    const r = rng(((seed || 20260920) ^ 0x5f3a) >>> 0);
+    const out = {};
+    for(let back = days; back >= 1; back--){
+      const anchor = nowTs - back * DAY;
+      const dow = new Date(anchor).getDay();
+      const base = (dow === 0 || dow === 6) ? BASE_WEEKEND : BASE_WEEKDAY;
+      const key = dayKey(anchor);
+      for(const s in STATION_SCALE){
+        for(let h = 0; h < 24; h++){
+          out[s + '|' + key + '|' + h] =
+            Math.round(base[h] * STATION_SCALE[s] * (0.88 + 0.24 * r()));
+        }
+      }
+    }
+    return out;
+  }
+
+  function forecastDemand(corpus, nowTs, stations, horizon, volume){
+    stations = stations || ['A','B']; horizon = horizon || 6;
+    const acc = {};
+    for(const s of stations){
+      acc[s] = [];
+      for(let i = 0; i < 24; i++) acc[s].push({ same:[], other:[] });
+    }
+    const byBucket = {};
+    if(volume) for(const k in volume) byBucket[k] = volume[k];
+    for(const t of corpus){
+      const d = new Date(t.ts);
+      const k = t.edgeId + '|' + dayKey(t.ts) + '|' + d.getHours();
+      byBucket[k] = (byBucket[k] || 0) + 1;
+    }
+    const todayDow = new Date(nowTs).getDay();
+    for(const k in byBucket){
+      const parts = k.split('|'), s = parts[0], date = parts[1], hr = +parts[2];
+      if(!acc[s]) continue;
+      const dow = new Date(date + 'T00:00:00').getDay();
+      acc[s][hr][dow === todayDow ? 'same' : 'other'].push(byBucket[k]);
+    }
+    const mean = a => a.length ? a.reduce((x,y) => x + y, 0) / a.length : 0;
+    const out = {};
+    const h0 = new Date(nowTs).getHours();
+    for(const s of stations){
+      out[s] = [];
+      for(let i = 0; i < horizon; i++){
+        const h = (h0 + i) % 24;
+        const b = acc[s][h];
+        /* weight the matching weekday more heavily; fall back to all days */
+        const v = b.same.length ? 0.65 * mean(b.same) + 0.35 * mean(b.other) : mean(b.other);
+        const expected = Math.round(v * 10) / 10;
+        const load = expected / GATE_CAPACITY_PER_HOUR;
+        out[s].push({ hour:h, expected:expected, load:Math.round(load * 100),
+          level: load >= 0.8 ? 'crush' : load >= 0.55 ? 'busy' : load >= 0.25 ? 'steady' : 'light',
+          basis: b.same.length + b.other.length });
+      }
+    }
+    return out;
+  }
+
+  /* ---------- 6. natural-language query over the tap record ----------
+     Intent plus entity extraction, executed against the same rows the ledger
+     shows. Deterministic, so a wrong answer is a bug you can fix rather than a
+     sampling artefact - and an operator can check the row count by eye. */
+  const STATION_WORDS = { A:['railways','muthurwa','rlw'], B:['upper hill','upperhill','uph','upper'] };
+
+  function parseQuery(text){
+    const q = (text || '').toLowerCase().trim();
+    const f = { card:null, station:null, outcome:null, from:null, to:null, minScore:null, window:null };
+    let intent = /^(how many|count|number of)/.test(q) ? 'count'
+               : /\b(top|most|busiest|frequent)\b/.test(q) ? 'top'
+               : /\b(risk|anomal|suspicious|unusual|strange)\b/.test(q) ? 'risk'
+               : 'list';
+
+    const card = q.match(/\bk\s?(\d{3})\b/); if(card) f.card = 'K' + card[1];
+    for(const s in STATION_WORDS)
+      if(STATION_WORDS[s].some(w => q.indexOf(w) !== -1)) f.station = s;
+
+    if(/revok/.test(q)) f.outcome = 'REVOKED';
+    else if(/replay/.test(q)) f.outcome = 'REPLAY';
+    else if(/clone|duplicate/.test(q)) f.outcome = 'CLONE';
+    else if(/refus|reject|block|deni|fail|turned away/.test(q)) f.outcome = 'refused';
+    else if(/accept|allow|success|passed|through|\bok\b/.test(q)) f.outcome = 'accepted';
+
+    const after  = q.match(/after (\d{1,2})(?::(\d{2}))?/);
+    const before = q.match(/before (\d{1,2})(?::(\d{2}))?/);
+    if(after)  f.from = (+after[1]) * 60 + (+(after[2] || 0));
+    if(before) f.to   = (+before[1]) * 60 + (+(before[2] || 0));
+    if(/morning/.test(q))              { f.from = 5 * 60;  f.to = 12 * 60; }
+    if(/afternoon/.test(q))            { f.from = 12 * 60; f.to = 17 * 60; }
+    if(/evening|tonight|rush/.test(q)) { f.from = 16 * 60; f.to = 23 * 60; }
+    const lastN = q.match(/last (\d+) (hour|day)/);
+    if(lastN) f.window = { n:+lastN[1], unit:lastN[2] };
+    if(/\btoday\b/.test(q)) f.window = { n:1, unit:'day' };
+    const above = q.match(/(?:above|over|greater than|>)\s*(\d{1,3})/);
+    if(above) f.minScore = +above[1];
+
+    /* Did any of that actually land? A question we could not read must say so
+       rather than quietly returning the whole table as if it had understood. */
+    const recognised = !!(f.card || f.station || f.outcome || f.window ||
+                          f.from != null || f.to != null || f.minScore != null);
+    const wantsAll = /\b(all|every|everything)\b/.test(q);
+    const understood = recognised || wantsAll || intent !== 'list';
+
+    return { intent:intent, filters:f, raw:text, understood:understood };
+  }
+
+  function runQuery(parsed, ctx){
+    const rows      = ctx.rows || [];
+    const anomalies = ctx.anomalies || [];
+    const accounts  = ctx.accounts || {};
+    const nowTs     = ctx.nowTs || Date.now();
+    const sName     = ctx.stationName || (s => s);
+    const f = parsed.filters;
+
+    if(parsed.understood === false)
+      return { answer:'I could not read a filter out of that.',
+        hint:'Name a card, a station, an outcome or a time — or say "all taps".',
+        columns:[], rows:[], matched:0, understood:false };
+
+    if(parsed.intent === 'risk'){
+      const min = f.minScore != null ? f.minScore : 60;
+      const hits = anomalies.filter(a => a.score >= min && (!f.card || a.id === f.card));
+      return { answer: hits.length
+          ? hits.length + ' card' + (hits.length === 1 ? '' : 's') + ' scoring ' + min + ' or above.'
+          : 'No cards scoring ' + min + ' or above.',
+        columns:['Card','Holder','Score','Band','Leading factor'],
+        rows: hits.map(a => [a.id, (accounts[a.id] || {}).holder || '—',
+          String(a.score), a.band, (a.factors[0] || {}).why || '—']) };
+    }
+
+    let sel = rows.slice();
+    if(f.card)    sel = sel.filter(r => r.id === f.card);
+    if(f.station) sel = sel.filter(r => r.edgeId === f.station);
+    if(f.outcome === 'refused')       sel = sel.filter(r => r.code !== 'OK');
+    else if(f.outcome === 'accepted') sel = sel.filter(r => r.code === 'OK');
+    else if(f.outcome)                sel = sel.filter(r => r.code === f.outcome);
+    if(f.window) sel = sel.filter(r => r.ts >= nowTs - f.window.n * (f.window.unit === 'hour' ? HOUR : DAY));
+    if(f.from != null || f.to != null) sel = sel.filter(r => {
+      const d = new Date(r.ts), m = d.getHours() * 60 + d.getMinutes();
+      return (f.from == null || m >= f.from) && (f.to == null || m <= f.to);
+    });
+
+    if(parsed.intent === 'top'){
+      const by = {};
+      for(const r of sel) by[r.id] = (by[r.id] || 0) + 1;
+      const ranked = Object.keys(by).sort((a,b) => by[b] - by[a] || (a < b ? -1 : 1)).slice(0, 8);
+      return { answer: ranked.length ? ranked.length + ' cards, busiest first.' : 'Nothing matched that.',
+        columns:['Card','Holder','Taps'],
+        rows: ranked.map(id => [id, (accounts[id] || {}).holder || '—', String(by[id])]),
+        matched: sel.length };
+    }
+
+    const fmt = r => [r.id, (accounts[r.id] || {}).holder || '—', sName(r.edgeId),
+                      new Date(r.ts).toTimeString().slice(0,5), r.code];
+    if(parsed.intent === 'count'){
+      return { answer: sel.length + ' tap' + (sel.length === 1 ? '' : 's') + ' matched.',
+        columns:['Card','Holder','Station','Time','Result'],
+        rows: sel.slice(-8).reverse().map(fmt), matched: sel.length };
+    }
+    return { answer: sel.length ? sel.length + ' matching tap' + (sel.length === 1 ? '' : 's') + '.'
+                                : 'Nothing matched that.',
+      columns:['Card','Holder','Station','Time','Result'],
+      rows: sel.slice(-14).reverse().map(fmt), matched: sel.length };
+  }
+
+  /* ---------- 7. language and the SMS fallback ----------
+     USSD stays a fixed numbered menu in both languages: a rider at a gate needs
+     a deterministic tree, not a chatbot. Free text is accepted only on SMS,
+     where misreading costs a clarifying reply rather than a fare or a block.
+     Swahili strings are written for clarity over register and want a native
+     reviewer before any real deployment. */
+  const STR = {
+    en:{
+      m1:'1. Check balance', m2:'2. Top up fare', m3:'3. Report card lost',
+      m4:'4. Why was I refused?', m5:'5. Last 3 trips', m0:'0. Exit', m9:'9. Kiswahili',
+      balance:'Balance', status_active:'Status: Active', status_blocked:'STATUS: BLOCKED',
+      last_trip:'Last trip', back:'0. Back', card:'Card', none:'none',
+      confirm:'1. Confirm', cancel:'2. Cancel', yes_block:'1. Yes, block it', no:'2. No',
+      enter_amount:'Enter amount (20-5000)', topped:'Top-up successful.',
+      new_balance:'New balance', ref:'Ref', report_lost:'Report card', lost_q:'lost or stolen?',
+      blocks_all:'This blocks it at ALL gates', immediately:'immediately.',
+      pushed:'Deny-list signed and pushed to all gates.',
+      queued:'Gates are OFFLINE. Block is queued and applies at the next sync.',
+      free_repl:'Free replacement at any station with ID.',
+      no_refusals:'No refusals found for card', refused_at:'Refused at',
+      trips_title:'Last trips', none_trips:'No trips recorded for card',
+      invalid:'Invalid choice.', expired:'Session expired.',
+      dial:'Dial *384# and press Send.', registered:'Registered to',
+      out_of_range:'Amount out of range.', digits:'Enter digits only.',
+      sending:'Sending...', lang_name:'English'
+    },
+    sw:{
+      m1:'1. Angalia salio', m2:'2. Ongeza nauli', m3:'3. Ripoti kadi imepotea',
+      m4:'4. Kwa nini nilikataliwa?', m5:'5. Safari 3 za mwisho', m0:'0. Toka', m9:'9. English',
+      balance:'Salio', status_active:'Hali: Inatumika', status_blocked:'HALI: IMEZUIWA',
+      last_trip:'Safari ya mwisho', back:'0. Rudi', card:'Kadi', none:'hakuna',
+      confirm:'1. Thibitisha', cancel:'2. Ghairi', yes_block:'1. Ndiyo, izuie', no:'2. Hapana',
+      enter_amount:'Weka kiasi (20-5000)', topped:'Umeongeza nauli.',
+      new_balance:'Salio jipya', ref:'Kumb', report_lost:'Ripoti kadi', lost_q:'imepotea au imeibiwa?',
+      blocks_all:'Hii itaizuia malango YOTE', immediately:'mara moja.',
+      pushed:'Orodha ya kuzuia imesainiwa na kutumwa malango yote.',
+      queued:'Malango hayana mtandao. Zuio limehifadhiwa, litatumika mtandao ukirudi.',
+      free_repl:'Kadi mpya bila malipo kituo chochote ukiwa na kitambulisho.',
+      no_refusals:'Hakuna makatazo kwa kadi', refused_at:'Ulikataliwa',
+      trips_title:'Safari za mwisho', none_trips:'Hakuna safari kwa kadi',
+      invalid:'Chaguo si sahihi.', expired:'Muda wa kipindi umeisha.',
+      dial:'Piga *384# kisha bonyeza Send.', registered:'Imesajiliwa kwa',
+      out_of_range:'Kiasi hakikubaliki.', digits:'Weka tarakimu pekee.',
+      sending:'Inatuma...', lang_name:'Kiswahili'
+    }
+  };
+  function t(lang, key){
+    const d = STR[lang] || STR.en;
+    return (d[key] != null) ? d[key] : (STR.en[key] != null ? STR.en[key] : key);
+  }
+
+  const SMS_RULES = [
+    { intent:'block',
+      sw:/(potea|imepotea|nimepoteza|nimepotez|ibiwa|imeibiwa|wizi|zuia|izuie|funga)/,
+      en:/(lost|stolen|stole|steal|block|missing|misplaced)/ },
+    { intent:'balance', sw:/(salio|pesa|bakia|kiasi)/, en:/(balance|how much|credit|money)/ },
+    { intent:'trips',   sw:/(safari|historia)/,        en:/(trip|journey|history|travel)/ },
+    { intent:'help',    sw:/(msaada|saidia|nisaidie)/, en:/(help|support|what can|options)/ }
+  ];
+  function smsParse(text){
+    const q = (text || '').toLowerCase().trim();
+    if(!q) return { intent:'unknown', lang:'en', confidence:0 };
+    let swHits = 0, enHits = 0;
+    for(const r of SMS_RULES){ if(r.sw.test(q)) swHits++; if(r.en.test(q)) enHits++; }
+    const swWords = /(kadi|yangu|nina|tafadhali|asante|habari|ninataka|hii|leo|jana)/.test(q);
+    const lang = (swHits > enHits || (swWords && swHits > 0 && swHits >= enHits)) ? 'sw' : 'en';
+    for(const r of SMS_RULES){
+      const own = r[lang].test(q), other = r[lang === 'sw' ? 'en' : 'sw'].test(q);
+      if(own || other) return { intent:r.intent, lang:lang, confidence: own ? 0.9 : 0.6 };
+    }
+    return { intent:'unknown', lang:lang, confidence:0 };
+  }
+  function smsReply(parsed, ctx){
+    ctx = ctx || {};
+    const card = ctx.card || 'K042', balance = ctx.balance || 0;
+    const blocked = !!ctx.blocked, trips = ctx.trips || [], ref = ctx.ref || '';
+    const online = ctx.online !== false;
+    const L = parsed.lang;
+    if(parsed.intent === 'block'){
+      const tail = online ? t(L,'pushed') : t(L,'queued');
+      return L === 'sw'
+        ? 'Kadi ' + card + ' IMEZUIWA. ' + tail + ' Kumb ' + ref + '. ' + t('sw','free_repl')
+        : 'Card ' + card + ' BLOCKED. ' + tail + ' Ref ' + ref + '. ' + t('en','free_repl');
+    }
+    if(parsed.intent === 'balance')
+      return L === 'sw'
+        ? 'Kadi ' + card + ': salio KSh ' + balance + '. ' + (blocked ? 'Hali: IMEZUIWA.' : 'Hali: Inatumika.')
+        : 'Card ' + card + ': balance KSh ' + balance + '. ' + (blocked ? 'Status: BLOCKED.' : 'Status: Active.');
+    if(parsed.intent === 'trips')
+      return (L === 'sw' ? 'Safari za mwisho: ' : 'Last trips: ') +
+        (trips.length ? trips.join('; ') : (L === 'sw' ? 'hakuna.' : 'none.'));
+    if(parsed.intent === 'help')
+      return L === 'sw'
+        ? 'Tuma: SALIO, POTEA (kuzuia kadi), au SAFARI. Au piga *384#.'
+        : 'Reply BALANCE, LOST (to block the card), or TRIPS. Or dial *384#.';
+    return L === 'sw'
+      ? 'Samahani, hatujaelewa. Tuma SALIO, POTEA au SAFARI.'
+      : 'Sorry, we did not understand. Reply BALANCE, LOST or TRIPS.';
+  }
+
+  return { rng:rng, genCorpus:genCorpus, buildProfiles:buildProfiles, dayKey:dayKey,
+           scoreTap:scoreTap, band:band, scanCards:scanCards, buildCases:buildCases,
+           genVolume:genVolume, forecastDemand:forecastDemand,
+           parseQuery:parseQuery, runQuery:runQuery,
+           t:t, STR:STR, smsParse:smsParse, smsReply:smsReply,
+           PERSONAS:PERSONAS, LLM_SLOT:LLM_SLOT, GATE_CAPACITY_PER_HOUR:GATE_CAPACITY_PER_HOUR };
+})();
+/* ==== INTEL ENGINE END ==== */
+
 /* ================= USSD =================
    A feature-phone channel over the same state the gates use. Reporting a card
    lost here revokes it and pushes the re-signed deny-list to every gate — or
    queues it when the network is down, exactly as the gates behave. */
 const USSD_CODE='*384#', USSD_MSISDN='+254 7•• ••• 412', UID='K042';
 const SESSION_S=120;
-let U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:''};
+let U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:'',lang:'en'};
 let uTimer=null;
+/* one lookup for every string the handset shows; see INTEL.STR */
+const L = k => INTEL.t(U.lang, k);
 
 function uref(){ return 'TG'+Math.random().toString(36).slice(2,8).toUpperCase(); }
 function money(n){ return 'KSh '+n.toLocaleString('en-KE'); }
@@ -788,11 +1543,19 @@ function lastTapFor(id,accepted){
   return S.ledger.find(r=>r.id===id && (accepted? r.code==='OK' : r.code!=='OK'));
 }
 const REFUSAL_REASON={
-  'REVOKED':'Card blocked (reported lost or revoked).',
-  'CLONE':'A duplicate of this card was used at another station.',
-  'REPLAY':'A repeated tap token was rejected.',
-  'BAD-SIG':'The card could not be verified as genuine.'
+  en:{ 'REVOKED':'Card blocked (reported lost or revoked).',
+       'CLONE':'A duplicate of this card was used at another station.',
+       'REPLAY':'A repeated tap token was rejected.',
+       'BAD-SIG':'The card could not be verified as genuine.' },
+  sw:{ 'REVOKED':'Kadi imezuiwa (iliripotiwa kupotea).',
+       'CLONE':'Nakala ya kadi hii ilitumika kituo kingine.',
+       'REPLAY':'Tokeni iliyorudiwa ilikataliwa.',
+       'BAD-SIG':'Kadi haikuweza kuthibitishwa kuwa halali.' }
 };
+function refusalReason(code){
+  const d = REFUSAL_REASON[U.lang] || REFUSAL_REASON.en;
+  return d[code] || (U.lang==='sw' ? 'Kadi ilikataliwa.' : 'Card refused.');
+}
 
 function uBody(){
   const acct=S.accounts[UID];
@@ -800,42 +1563,50 @@ function uBody(){
   switch(U.node){
     case 'root':
       return 'TapGuard Metro\n'+
-        '1. Check balance\n2. Top up fare\n3. Report card lost\n'+
-        '4. Why was I refused?\n5. Last 3 trips\n0. Exit';
+        L('m1')+'\n'+L('m2')+'\n'+L('m3')+'\n'+L('m4')+'\n'+L('m5')+'\n'+L('m9')+'\n'+L('m0');
     case 'balance': {
       const t=lastTapFor(UID,true);
-      return 'Card '+UID+'\n'+acct.holder+'\n\nBalance '+money(acct.balance)+
-        (revoked?'\nSTATUS: BLOCKED':'\nStatus: Active')+
-        '\nLast trip: '+(t?STATIONS[t.edgeId].name.split(' ')[0]+' '+clock(t.ts):'none')+
-        '\n\n0. Back';
+      return L('card')+' '+UID+'\n'+acct.holder+'\n\n'+L('balance')+' '+money(acct.balance)+
+        '\n'+(revoked? L('status_blocked') : L('status_active'))+
+        '\n'+L('last_trip')+': '+(t?STATIONS[t.edgeId].name.split(' ')[0]+' '+clock(t.ts):L('none'))+
+        '\n\n'+L('back');
     }
-    case 'topAmt': return 'Top up card '+UID+'\n\nEnter amount\n(KSh 20 - 5,000)\n\n0. Back';
+    case 'topAmt':
+      return L('m2').slice(3)+' — '+L('card')+' '+UID+'\n\n'+L('enter_amount')+'\n\n'+L('back');
     case 'topConfirm':
-      return 'Top up '+money(U.amt)+'\nto card '+UID+'?\n\n(PIN step omitted in\nthis simulation)\n\n1. Confirm\n2. Cancel';
+      return (U.lang==='sw'
+          ? 'Ongeza '+money(U.amt)+'\nkwa kadi '+UID+'?\n\n(Hatua ya PIN imeachwa\nkatika onyesho hili)'
+          : 'Top up '+money(U.amt)+'\nto card '+UID+'?\n\n(PIN step omitted in\nthis simulation)')+
+        '\n\n'+L('confirm')+'\n'+L('cancel');
     case 'topDone':
-      return 'Top-up successful.\n\n'+money(U.amt)+' added.\nNew balance '+money(acct.balance)+
-        '\nRef '+U.ref+'\n\n0. Back';
+      return L('topped')+'\n\n'+money(U.amt)+(U.lang==='sw'?' imeongezwa.':' added.')+
+        '\n'+L('new_balance')+' '+money(acct.balance)+
+        '\n'+L('ref')+' '+U.ref+'\n\n'+L('back');
     case 'lostConfirm':
-      if(revoked) return 'Card '+UID+' is already\nblocked.\n\n0. Back';
-      return 'Report card '+UID+'\nlost or stolen?\n\nThis blocks it at ALL\ngates immediately.\n\n1. Yes, block it\n2. No';
+      if(revoked) return L('card')+' '+UID+
+        (U.lang==='sw'? ' tayari\nimezuiwa.' : ' is already\nblocked.')+'\n\n'+L('back');
+      return L('report_lost')+' '+UID+'\n'+L('lost_q')+'\n\n'+
+        L('blocks_all')+'\n'+L('immediately')+'\n\n'+L('yes_block')+'\n'+L('no');
     case 'lostDone':
-      return 'Card '+UID+' BLOCKED.\n\n'+
+      return L('card')+' '+UID+' '+(U.lang==='sw'?'IMEZUIWA.':'BLOCKED.')+'\n\n'+
         (S.online
-          ? 'Deny-list v'+S.backend.denyVer+' signed\nand pushed to all gates.'
-          : 'Gates are OFFLINE.\nBlock is queued and\napplies at next sync.')+
-        '\nRef '+U.ref+'\n\nFree replacement at\nany station with ID.\n\n0. Back';
+          ? (U.lang==='sw'
+              ? 'Orodha ya kuzuia v'+S.backend.denyVer+'\nimesainiwa na kutumwa\nmalango yote.'
+              : 'Deny-list v'+S.backend.denyVer+' signed\nand pushed to all gates.')
+          : L('queued'))+
+        '\n'+L('ref')+' '+U.ref+'\n\n'+L('free_repl')+'\n\n'+L('back');
     case 'why': {
       const r=lastTapFor(UID,false);
-      if(!r) return 'No refusals found for\ncard '+UID+'.\n\n0. Back';
-      return 'Refused at\n'+STATIONS[r.edgeId].name+'\n'+clock(r.ts)+'\n\n'+
-        (REFUSAL_REASON[r.code]||'Card refused.')+'\n\nCollect a free\nreplacement at any\nstation.\n\n0. Back';
+      if(!r) return L('no_refusals')+'\n'+UID+'.\n\n'+L('back');
+      return L('refused_at')+'\n'+STATIONS[r.edgeId].name+'\n'+clock(r.ts)+'\n\n'+
+        refusalReason(r.code)+'\n\n'+L('free_repl')+'\n\n'+L('back');
     }
     case 'trips': {
       const t=S.ledger.filter(r=>r.id===UID&&r.code==='OK').slice(0,3);
-      if(!t.length) return 'No trips recorded for\ncard '+UID+'.\n\n0. Back';
-      return 'Last trips — '+UID+'\n\n'+t.map((r,i)=>
+      if(!t.length) return L('none_trips')+'\n'+UID+'.\n\n'+L('back');
+      return L('trips_title')+' — '+UID+'\n\n'+t.map((r,i)=>
         (i+1)+'. '+STATIONS[r.edgeId].name.split(' ')[0]+' '+clock(r.ts)+'  '+money(FARE)).join('\n')+
-        '\n\n0. Back';
+        '\n\n'+L('back');
     }
     default: return '';
   }
@@ -847,7 +1618,7 @@ function uSubmit(){
 
   if(!U.open){
     if(inp===USSD_CODE){ U.open=true; U.node='root'; startUTimer(); }
-    else U.notice='Invalid code. Dial '+USSD_CODE;
+    else U.notice=(U.lang==='sw'?'Msimbo si sahihi. Piga ':'Invalid code. Dial ')+USSD_CODE;
     renderPhone(); return;
   }
   const back=()=>{ U.node='root'; };
@@ -859,17 +1630,20 @@ function uSubmit(){
       else if(inp==='3') U.node='lostConfirm';
       else if(inp==='4') U.node='why';
       else if(inp==='5') U.node='trips';
-      else if(inp==='0'){ uEnd('Thank you for using\nTapGuard Metro.'); return; }
-      else U.notice='Invalid choice.';
+      else if(inp==='9'){ setLang(U.lang==='en'?'sw':'en'); return; }
+      else if(inp==='0'){
+        uEnd(U.lang==='sw' ? 'Asante kwa kutumia\nTapGuard Metro.'
+                           : 'Thank you for using\nTapGuard Metro.'); return; }
+      else U.notice=L('invalid');
       break;
     case 'balance': case 'why': case 'trips': case 'topDone': case 'lostDone':
-      if(inp==='0') back(); else U.notice='Invalid choice.';
+      if(inp==='0') back(); else U.notice=L('invalid');
       break;
     case 'topAmt': {
       if(inp==='0'){ back(); break; }
       const n=parseInt(inp,10);
-      if(!/^\d+$/.test(inp)||isNaN(n)) U.notice='Enter digits only.';
-      else if(n<20||n>5000) U.notice='Amount out of range.';
+      if(!/^\d+$/.test(inp)||isNaN(n)) U.notice=L('digits');
+      else if(n<20||n>5000) U.notice=L('out_of_range');
       else { U.amt=n; U.node='topConfirm'; }
       break;
     }
@@ -880,7 +1654,7 @@ function uSubmit(){
           ['channel: USSD '+USSD_CODE, 'ref '+U.ref], 'None — balance credited.');
         toast('USSD top-up: '+money(U.amt)+' to '+UID);
       } else if(inp==='2') back();
-      else U.notice='Invalid choice.';
+      else U.notice=L('invalid');
       break;
     case 'lostConfirm':
       if(inp==='1'){
@@ -896,21 +1670,32 @@ function uSubmit(){
         toast('Card '+UID+' blocked via USSD');
         U.node='lostDone';
       } else if(inp==='2') back();
-      else U.notice='Invalid choice.';
+      else U.notice=L('invalid');
       break;
   }
   renderAll();
 }
 
+/* Language is a property of the session, not of the page: a rider switching to
+   Kiswahili mid-menu should land back on a menu they can read. */
+function setLang(lang){
+  U.lang = (lang==='sw') ? 'sw' : 'en';
+  if(U.open) U.node='root';
+  U.notice='';
+  try{ localStorage.setItem('tapguard.lang', U.lang); }catch(e){}
+  renderAll();
+}
+
 function uEnd(msg){
-  U.open=false; U.node='root'; U.input=''; U.notice=msg||'Session ended.';
+  U.open=false; U.node='root'; U.input='';
+  U.notice = msg || (U.lang==='sw' ? 'Kipindi kimeisha.' : 'Session ended.');
   stopUTimer(); renderAll();
 }
 function startUTimer(){
   stopUTimer(); U.left=SESSION_S;
   uTimer=setInterval(()=>{
     U.left--;
-    if(U.left<=0){ uEnd('Session expired.'); return; }
+    if(U.left<=0){ uEnd(L('expired')); return; }
     renderPhone();
   },1000);
 }
@@ -924,7 +1709,7 @@ function renderPhone(){
     (U.open?('USSD '+String(Math.floor(U.left/60))+':'+String(U.left%60).padStart(2,'0')):'Ready')+'</span></div>';
   let body;
   if(U.open) body=uBody();
-  else body='TapGuard Metro\n\nDial '+USSD_CODE+' and press\nSend.\n\nRegistered to\n'+USSD_MSISDN+'\ncard '+UID;
+  else body='TapGuard Metro\n\n'+L('dial')+'\n\n'+L('registered')+'\n'+USSD_MSISDN+'\n'+L('card').toLowerCase()+' '+UID;
   const notice=U.notice? '\n\n'+U.notice : '';
   const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;');
   lcd.innerHTML = head + esc(body+notice) +
@@ -932,14 +1717,20 @@ function renderPhone(){
 }
 
 /* ================= RENDER ================= */
-function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTimeline(); renderTiles(); renderPanel(); }
+function renderAll(){ renderNet(); renderRibbon(); renderSteps(); renderWallet(); renderGates(); renderTimeline(); renderTiles(); renderPanel(); renderIntel(); }
 
 function renderRibbon(){
   const buffered = S.edges.A.buffer.length + S.edges.B.buffer.length;
   const revoked = S.backend.deny.size;
   let sysCls='ok', sysTxt='Operational';
   if(!S.online){ sysCls='warnc'; sysTxt='Degraded — local validation'; }
-  if(S.openIncident){ sysCls='bad'; sysTxt='Active fraud incident'; }
+  /* Derived from the triage cases rather than a sticky flag, so the ribbon can
+     never contradict the case list: a confirmed clone that has since been revoked
+     is a closed case, and the banner must go back to green when it closes. Only a
+     critical case still OPEN counts as an incident in progress. */
+  if(currentCases().some(c=>c.severity==='critical' && c.state==='open')){
+    sysCls='bad'; sysTxt='Active fraud incident';
+  }
   const rows=[
     ['seg-i '+sysCls, true, 'System', sysTxt],
     ['seg-i '+(S.online?'ok':'bad'), true, 'Gate link', S.online?'2 / 2 networked':'0 / 2 — buffering'],
@@ -1146,7 +1937,14 @@ function renderPanel(){
   const p=el('panel'), pu=el('panelUssd');
   const onUssd = S.tab==='ussd';
   p.hidden=onUssd; pu.hidden=!onUssd;
-  if(onUssd){ renderPhone(); return; }
+  if(onUssd){
+    document.querySelectorAll('#langSeg .seg-b').forEach(b=>
+      b.setAttribute('aria-pressed', b.dataset.lang===U.lang ? 'true':'false'));
+    el('ussdHint').innerHTML = U.lang==='sw'
+      ? 'Piga <b>*384#</b> kisha bonyeza Send. Chaguo <b>3</b> huzuia kadi malango yote. <b>9</b> hubadilisha lugha.'
+      : 'Dial <b>*384#</b> and press Send. Option <b>3</b> blocks the registered card at every gate. <b>9</b> switches language.';
+    renderPhone(); renderSms(); return;
+  }
   if(S.tab==='inc') p.innerHTML = renderIncidents();
   else if(S.tab==='lg') p.innerHTML = renderLedger();
   else p.innerHTML = renderDeny();
@@ -1188,6 +1986,244 @@ function renderDeny(){
 }
 
 function clock(ts){ const d=new Date(ts); return d.toTimeString().slice(0,8); }
+function hhmm(ts){ const d=new Date(ts); return d.toTimeString().slice(0,5); }
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+/* ================= OPERATIONS INTELLIGENCE =================
+   Everything below reads what the gates already decided. None of it can change
+   a gate decision, and the console says so on the panel header. */
+let CORPUS=[], PROFILES={}, VOLUME={};
+function initIntel(){
+  CORPUS   = INTEL.genCorpus(now(), 14);      // the seven named riders
+  PROFILES = INTEL.buildProfiles(CORPUS);     // one behavioural baseline each
+  VOLUME   = INTEL.genVolume(now(), 14);      // anonymous station throughput
+}
+/* today's live activity, in the shape the engine expects */
+function ledgerTaps(){
+  return S.ledger.map(r=>({id:r.id, edgeId:r.edgeId, ts:r.ts, code:r.code}))
+                 .sort((a,b)=>a.ts-b.ts);
+}
+function allTaps(){ return CORPUS.concat(ledgerTaps()); }
+
+/* score every card that has tapped today against its own fourteen-day history */
+function scanToday(){
+  const today = ledgerTaps();
+  return INTEL.scanCards(PROFILES, today, (id, latest, mine)=>{
+    const accepted = mine.filter(t=>t.code==='OK');
+    const prev = mine.length>1 ? mine[mine.length-2] : null;
+    let impossibleGapS = 0, impossible = false;
+    for(let i=1;i<mine.length;i++){
+      if(mine[i].code==='CLONE'){
+        impossible = true;
+        impossibleGapS = Math.max(1, Math.round((mine[i].ts - mine[i-1].ts)/1000));
+        break;
+      }
+    }
+    return { stationName: STATIONS[latest.edgeId].name,
+             todayCount: accepted.length,
+             gapMin: prev ? (latest.ts - prev.ts)/60000 : null,
+             impossible, impossibleGapS };
+  });
+}
+function currentCases(){
+  return INTEL.buildCases({
+    incidents:S.incidents, anomalies:scanToday(), deny:S.backend.deny,
+    denyDetail:S.denyDetail, accounts:S.accounts, fare:FARE });
+}
+
+function renderIntel(){
+  const cases = currentCases(), scan = scanToday();
+  el('caseB').textContent = cases.filter(c=>c.state!=='monitoring').length;
+  el('riskB').textContent = scan.filter(a=>a.score>=60).length;
+  document.querySelectorAll('[data-itab]').forEach(b=>
+    b.setAttribute('aria-selected', b.dataset.itab===S.itab?'true':'false'));
+  const map={cases:'ipCases', risk:'ipRisk', ask:'ipAsk', demand:'ipDemand'};
+  for(const k in map) el(map[k]).hidden = (k!==S.itab);
+  const n = allTaps().length;
+  el('askCorpusN').textContent = n.toLocaleString('en-KE');
+  if(S.itab==='cases')       el('ipCases').innerHTML  = renderCases(cases);
+  else if(S.itab==='risk')   el('ipRisk').innerHTML   = renderRisk(scan);
+  else if(S.itab==='demand') el('ipDemand').innerHTML = renderDemand();
+}
+
+/* ---------- triage copilot ---------- */
+function renderCases(cases){
+  const lede='<div class="ibar"><p class="lede">Every signal about one card &mdash; rule hits and '+
+    'behaviour &mdash; clustered into a single case with a written recommendation. Composed from the '+
+    'evidence, not from a template: <b>the action is always rule-derived</b>, so a wording change can '+
+    'never turn into a revocation.</p></div>';
+  if(!cases.length) return lede+'<div class="empty">No open cases. Nothing on today’s record needs an operator.</div>';
+  const body = cases.map(c=>{
+    const ev=[];
+    if(c.evidence.incidents.length) ev.push(c.evidence.incidents.join(' &middot; '));
+    if(c.evidence.anomaly) ev.push('behaviour '+c.evidence.anomaly.score+'/100');
+    return '<div class="case '+c.severity+'">'+
+      '<div class="ch"><span class="cid">'+c.id+'</span>'+
+        '<span class="pill '+c.severity+'">'+c.severity+'</span>'+
+        '<span class="pill '+c.state+'">'+c.state+'</span>'+
+        '<span class="pill">confidence '+c.confidence+'</span>'+
+        (c.exposure?'<span class="pill">exposure '+KES(c.exposure)+'</span>':'')+
+      '</div>'+
+      '<div class="csum">'+esc(c.summary)+'</div>'+
+      '<div class="cact"><span class="lbl">recommended</span>'+esc(c.action)+
+        '<div class="why">'+esc(c.rationale)+'</div></div>'+
+    '</div>';
+  }).join('');
+  return lede+'<div class="icols">'+body+'</div>';
+}
+
+/* ---------- behavioural anomaly detection ---------- */
+function renderRisk(scan){
+  const lede='<div class="ibar"><p class="lede">Each card scored against <b>its own</b> fourteen-day '+
+    'pattern &mdash; stations, hours, trips per day, time between taps. This is the layer that can see '+
+    'a quietly shared or borrowed card, which passes all four cryptographic checks because every '+
+    'single tap is genuine. <b>It never blocks anyone</b>; it decides who is worth an operator’s '+
+    'attention.</p></div>';
+  if(!scan.length) return lede+'<div class="empty">No cards have tapped yet today.</div>';
+  const body = scan.map(a=>{
+    const f = a.factors.filter(x=>x.k!=='history');
+    const holder = (S.accounts[a.id]||{}).holder || '';
+    return '<div class="risk '+a.band+'">'+
+      '<div class="rh"><span class="rid">'+a.id+'</span><span class="rname">'+esc(holder)+'</span>'+
+        '<span class="rscore">'+(a.band==='insufficient'?'no baseline':a.score)+'</span></div>'+
+      (a.band==='insufficient'?'' :
+        '<div class="meter"><i style="width:'+a.score+'%"></i></div>')+
+      (f.length
+        ? '<ul>'+f.map(x=>'<li>'+esc(x.why)+'</li>').join('')+'</ul>'
+        : '<div class="quiet">'+(a.band==='insufficient'
+            ? 'Too little history to judge this card. Not an accusation.'
+            : 'Consistent with this card’s usual pattern.')+'</div>')+
+    '</div>';
+  }).join('');
+  return lede+'<div class="icols">'+body+'</div>';
+}
+
+/* ---------- demand and crowding ---------- */
+function renderDemand(){
+  const fc = INTEL.forecastDemand(CORPUS, now(), ['A','B'], 6, VOLUME);
+  const lede='<div class="ibar"><p class="lede">Expected taps per hour at each gate, from fourteen '+
+    'days of throughput weighted toward the same weekday. Crowding is that figure against a stated '+
+    'gate capacity of <b>'+INTEL.GATE_CAPACITY_PER_HOUR+' taps an hour</b>. This reads the whole tap '+
+    'stream, not just the seven riders named elsewhere in the console.</p></div>';
+  const cols = ['A','B'].map(s=>{
+    const series = fc[s];
+    const peak = Math.max(1, ...series.map(p=>p.expected));
+    const bars = series.map((p,i)=>{
+      const h = Math.round(72 * p.expected / peak);
+      return '<div class="bcol '+p.level+'">'+
+        '<div class="bv">'+(p.expected||0)+'</div>'+
+        '<div class="bar" style="height:'+Math.max(3,h)+'px" title="'+p.expected+
+          ' taps expected, '+p.load+'% of capacity"></div>'+
+        '<div class="bh">'+String(p.hour).padStart(2,'0')+(i===0?'*':'')+'</div></div>';
+    }).join('');
+    const worst = series.reduce((a,b)=>b.expected>a.expected?b:a, series[0]);
+    return '<div class="fc"><h3>'+STATIONS[s].name+'</h3>'+
+      '<div class="sub">busiest in the next six hours: '+String(worst.hour).padStart(2,'0')+
+        ':00 &mdash; '+worst.expected+' taps, '+worst.level+'</div>'+
+      '<div class="bars">'+bars+'</div></div>';
+  }).join('');
+  const key='<div class="fckey"><span><i class="l"></i>light</span><span><i class="s"></i>steady</span>'+
+    '<span><i class="b"></i>busy</span><span><i class="c"></i>crush</span>'+
+    '<span>* current hour</span></div>';
+  const note='<p class="fcnote">This is a historical-mean baseline, not a learned model: it cannot see '+
+    'a match at Kasarani, rain, or a closed road. It is still what tells a station manager where to put '+
+    'staff at 17:00, and it is honest about being a starting point.</p>';
+  return lede+'<div class="icols">'+cols+'</div>'+key+note;
+}
+
+/* ---------- natural-language query ---------- */
+const ASK_EXAMPLES = [
+  'how many taps at Upper Hill this evening',
+  'show refused taps',
+  'top riders by trips',
+  'which cards look suspicious',
+  'taps by K042 this morning',
+  'any clones today'
+];
+function renderAskChips(){
+  el('askChips').innerHTML = ASK_EXAMPLES.map(q=>
+    '<button type="button" class="chip" data-ask="'+esc(q)+'">'+esc(q)+'</button>').join('');
+}
+function runAsk(q){
+  const parsed = INTEL.parseQuery(q);
+  const res = INTEL.runQuery(parsed, {
+    rows: allTaps(), anomalies: scanToday(), accounts: S.accounts,
+    nowTs: now(), stationName: s => STATIONS[s] ? STATIONS[s].name : s });
+  const f = parsed.filters;
+  /* show the reading back, so a wrong answer is visibly a wrong reading */
+  const read = [];
+  read.push('intent=' + parsed.intent);
+  if(f.card)     read.push('card=' + f.card);
+  if(f.station)  read.push('station=' + STATIONS[f.station].name);
+  if(f.outcome)  read.push('outcome=' + f.outcome);
+  if(f.from!=null) read.push('from=' + String(Math.floor(f.from/60)).padStart(2,'0') + ':' + String(f.from%60).padStart(2,'0'));
+  if(f.to!=null)   read.push('to=' + String(Math.floor(f.to/60)).padStart(2,'0') + ':' + String(f.to%60).padStart(2,'0'));
+  if(f.window)   read.push('window=last ' + f.window.n + ' ' + f.window.unit);
+  if(f.minScore!=null) read.push('score>=' + f.minScore);
+  if(read.length===1) read.push('no filters recognised');
+
+  const table = res.rows.length
+    ? '<table class="dtable"><thead><tr>'+res.columns.map(c=>'<th>'+c+'</th>').join('')+
+      '</tr></thead><tbody>'+res.rows.map(r=>'<tr>'+r.map(c=>'<td>'+esc(c)+'</td>').join('')+
+      '</tr></tbody>').join('')+'</table>'
+    : '';
+  const more = (res.matched && res.matched > res.rows.length)
+    ? '<div class="askread">showing the most recent '+res.rows.length+' of '+res.matched+'</div>' : '';
+  el('askOut').innerHTML = '<div class="askans">'+esc(res.answer)+'</div>'+
+    (res.hint ? '<div class="askread">'+esc(res.hint)+'</div>'
+              : '<div class="askread">read as &rarr; '+esc(read.join('  ·  '))+'</div>')+
+    table + more;
+}
+
+/* ---------- SMS fallback ---------- */
+function renderSms(){
+  const box = el('smsThread');
+  if(!box) return;
+  if(!S.sms.length){
+    box.innerHTML = '<div class="empty" style="padding:14px">Nothing sent yet. Try '+
+      '<b>nimepoteza kadi yangu</b> or <b>what is my balance</b>.</div>';
+    return;
+  }
+  box.innerHTML = S.sms.map(m=>'<div class="msg '+m.dir+'">'+esc(m.text)+
+    '<span class="meta">'+(m.dir==='out'?USSD_MSISDN:'22384')+' · '+hhmm(m.ts)+
+    (m.meta?' · '+esc(m.meta):'')+'</span></div>').join('');
+  box.scrollTop = box.scrollHeight;
+}
+function sendSms(text){
+  if(!text.trim()) return;
+  const acct = S.accounts[UID];
+  S.sms.push({dir:'out', text:text.trim(), ts:now()});
+  const parsed = INTEL.smsParse(text);
+
+  /* a block over SMS takes exactly the same path as option 3 on the handset */
+  let ref='';
+  if(parsed.intent==='block' && !S.backend.deny.has(UID)){
+    ref = uref();
+    revoke(UID, 'Reported lost by holder via SMS to 22384 (ref '+ref+')');
+    addIncident('warn','Card reported lost via SMS',
+      acct.holder+' blocked card '+UID+' by text message from '+USSD_MSISDN+'. '+
+      (S.online ? 'Deny-list v'+S.backend.denyVer+' signed and pushed to all gates.'
+                : 'Network is down — the block is queued and applies at the next reconcile.'),
+      ['channel: SMS 22384', 'parsed intent: block ('+parsed.lang+', confidence '+parsed.confidence+')',
+       'text: "'+text.trim()+'"', 'ref '+ref],
+      S.online ? 'Card refused at every gate from now. Issue replacement on ID.'
+               : 'Reconcile once the link returns to push the block to the gates.');
+    toast('Card '+UID+' blocked via SMS');
+  } else if(parsed.intent==='block'){
+    ref = 'already-blocked';
+  }
+
+  const trips = S.ledger.filter(r=>r.id===UID && r.code==='OK').slice(0,3)
+    .map(r=>STATIONS[r.edgeId].name.split(' ')[0]+' '+hhmm(r.ts)+' '+money(FARE));
+  const reply = INTEL.smsReply(parsed, {
+    card:UID, holder:acct.holder, balance:acct.balance,
+    blocked:S.backend.deny.has(UID), trips, ref, online:S.online });
+
+  S.sms.push({dir:'in', text:reply, ts:now(),
+    meta: parsed.intent==='unknown' ? 'not understood'
+        : parsed.intent+' · '+(parsed.lang==='sw'?'Kiswahili':'English')});
+  renderAll();
+}
 
 /* ================= EVENTS ================= */
 let busy=false;
@@ -1206,8 +2242,15 @@ document.addEventListener('click', async e=>{
   }
   const tapBtn=e.target.closest('[data-tap]');
   const cloneBtn=e.target.closest('[data-clone]');
+  /* the intelligence tabs share the .tab class, so they must be claimed first */
+  const itab=e.target.closest('[data-itab]');
+  if(itab){ S.itab=itab.dataset.itab; renderIntel(); return; }
+  const lang=e.target.closest('#langSeg [data-lang]');
+  if(lang){ setLang(lang.dataset.lang); return; }
+  const chip=e.target.closest('[data-ask]');
+  if(chip){ el('askIn').value=chip.dataset.ask; runAsk(chip.dataset.ask); return; }
   const tab=e.target.closest('.tab');
-  if(tab){ S.tab=tab.dataset.tab; renderPanel(); return; }
+  if(tab && tab.dataset.tab){ S.tab=tab.dataset.tab; renderPanel(); return; }
   if(cloneBtn){ await cloneMedia(cloneBtn.dataset.clone); return; }
   if(e.target.closest('#reconcileBtn')){ reconcile(); return; }
   if(tapBtn && !busy){
@@ -1227,8 +2270,17 @@ el('netSwitch').addEventListener('click', ()=>{
   renderAll();
 });
 el('resetBtn').addEventListener('click', async ()=>{
-  stopUTimer(); U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:''};
+  stopUTimer();
+  /* language is the viewer's choice, not demo state — it survives a reset */
+  U={open:false,node:'root',input:'',left:SESSION_S,notice:'',amt:0,ref:'',lang:U.lang};
   await boot(); toast('Demo reset to initial state');
+});
+
+el('askForm').addEventListener('submit', e=>{ e.preventDefault(); runAsk(el('askIn').value); });
+el('smsForm').addEventListener('submit', e=>{
+  e.preventDefault();
+  const v=el('smsIn').value; el('smsIn').value='';
+  sendSms(v);
 });
 
 /* ---------- presenter mode, remembered per viewer ---------- */

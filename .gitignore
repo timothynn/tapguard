@@ -4,3 +4,7 @@ Thumbs.db
 node_modules/
 *.log
 .tmp
+
+# local dev server, not deployed
+serve.mjs
+.claude/
