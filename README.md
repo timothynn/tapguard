@@ -30,7 +30,7 @@ A fare validator therefore has to answer, in under a second and with no network:
 
 ## What this is
 
-Two self-contained HTML pages. No build step, no dependencies, no server.
+Three self-contained HTML pages and a landing page.
 
 **Live:** https://timothynn.is-a.dev/tapguard/
 
@@ -256,10 +256,46 @@ The console walks you through it with a checklist that advances automatically as
 The simulation tells the same story as a narrated animation. Press **Play with sound**;
 `M` mutes, the microphone button turns narration off so you can speak over it live.
 
+## Tech stack
+
+**Vanilla HTML, CSS and JavaScript. No framework, no build step, no dependencies, no
+server.** There is no `package.json`, no bundler config and no `node_modules`. Four
+self-contained files you can open by double-clicking.
+
+The only resource fetched from outside is Google Fonts.
+
+| Layer | What is used |
+|---|---|
+| Cryptography | **WebCrypto** (`crypto.subtle`) — HMAC-SHA256 tap tokens and deny-list signing. Real cryptography, not a stand-in. |
+| Sound | **Web Audio API** — every tone synthesised in-page, including true DTMF pairs on the USSD keypad. |
+| Narration | **SpeechSynthesis API** — the browser's own voice, on both simulations. |
+| Graphics | **Inline SVG**, hand-built — the journey timeline, the demand charts, every simulation scene. |
+| Theming | **CSS custom properties**, three-state (follow system / force light / force dark). |
+| Persistence | **localStorage** — theme, presenter mode, handset language. |
+| Tests | **Node ESM**, no test framework: `node:fs`, `node:crypto`, `node:path`. |
+| Hosting | **GitHub Pages** from `main`, custom domain. No CI, no deploy pipeline. |
+
+About 4,700 lines in total; the operator console is 2,324 of them.
+
+### Why no framework
+
+The constraints chose it. A fare validator has to work offline in a tunnel, decide in
+under a second, and be auditable line by line. A framework plus a bundler would add a
+build step, a dependency tree to vouch for, and hydration between a rider tapping and a
+gate opening — all cost, no benefit at this size. WebCrypto ships in every browser. The
+interesting problem here was the detection logic, not the rendering.
+
+The trade is real and worth stating: at production scale you would want a component model,
+a typed codebase, and a server that is not the browser. A 2,300-line single file is the
+right shape for something a judge must read end to end in five minutes, and the wrong
+shape for something five engineers maintain for three years.
+
 ## Design notes
 
-- **No external assets.** All audio is synthesised with the Web Audio API; narration uses
-  the browser's own speech synthesiser. Nothing to download or buffer.
+- **No external media.** All audio is synthesised with the Web Audio API; narration uses
+  the browser's own speech synthesiser. Nothing to download or buffer. The pages do pull
+  webfonts from Google Fonts, so they are not strictly offline-capable as served — they
+  fall back to system fonts cleanly, but that is a network request, not zero.
 - **Light and dark themes**, remembered per viewer.
 - **Responsive** down to phone width.
 - Fare and geography constants (KSh 50 flat CBD-core fare, 120 s minimum transfer,
